@@ -1,0 +1,72 @@
+//
+//  Cupon.swift
+//  Stripe
+//
+//  Created by Hakon Hanesand on 12/2/16.
+//
+//
+
+import Foundation
+import Node
+
+enum Duration: String, NodeConvertible {
+    
+    case forever
+    case once
+    case repeating
+}
+
+final class Cupon: NodeConvertible {
+    
+    static let type = "cupon"
+    
+    let id: String
+    let amount_off: Int?
+    let created: Date
+    let currency: String?
+    let duration: String
+    let duration_in_months: Int?
+    let livemode: Bool
+    let max_redemptions: Int
+    let percent_off: Int
+    let redeem_by: Date
+    let times_redeemed: Int
+    let valid: Bool
+    
+    init(node: Node, in context: Context = EmptyNode) throws {
+        guard try node.extract("object") == Cupon.type else {
+            throw NodeError.unableToConvert(node: node, expected: Cupon.type)
+        }
+        
+        id = try node.extract("id")
+        amount_off = try node.extract("amount_off")
+        created = try node.extract("created")
+        currency = try node.extract("currency")
+        duration = try node.extract("duration")
+        duration_in_months = try node.extract("duration_in_months")
+        livemode = try node.extract("livemode")
+        max_redemptions = try node.extract("max_redemptions")
+        percent_off = try node.extract("percent_off")
+        redeem_by = try node.extract("redeem_by")
+        times_redeemed = try node.extract("times_redeemed")
+        valid = try node.extract("valid")
+    }
+    
+    func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "id" : .string(id),
+            "created" : .number(.double(created.timeIntervalSince1970)),
+            "duration" : .string(duration),
+            "livemode" : .bool(livemode),
+            "max_redemptions" : .number(.int(max_redemptions)),
+            "percent_off" : .number(.int(percent_off)),
+            "redeem_by" : .number(.double(redeem_by.timeIntervalSince1970)),
+            "times_redeemed" : .number(.int(times_redeemed)),
+            "valid" : .bool(valid)
+            ] as [String : Node]).add(objects: [
+                "amount_off" : amount_off,
+                "currency" : currency,
+                "duration_in_months" : duration_in_months
+            ])
+    }
+}
