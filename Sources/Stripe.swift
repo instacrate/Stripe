@@ -12,6 +12,17 @@ import HTTP
 import Transport
 import Vapor
 
+public enum StripeError: Error {
+
+    case error(type: String, message: String)
+
+    public var localizedDescription: String {
+        switch self {
+        case let .error(type, message):
+            return "<StripeError> \(type) : \(message)"
+        }
+    }
+}
 
 extension Message {
 
@@ -64,7 +75,27 @@ class HTTPClient {
             throw Abort.custom(status: .internalServerError, message: response.description)
         }
 
+        try checkForStripeError(in: json)
+
         return try T.init(node: json.makeNode())
+    }
+
+    func get<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> [T] {
+        let response = try client.get(baseURLString + resource, headers: Stripe.authorizationHeader, query: query)
+
+        guard let json = try? response.json() else {
+            throw Abort.custom(status: .internalServerError, message: response.description)
+        }
+
+        try checkForStripeError(in: json)
+
+        guard let objects = json.node["data"]?.nodeArray else {
+            throw Abort.custom(status: .internalServerError, message: "Unexpected response formatting. \(json)")
+        }
+
+        return try objects.map {
+            return try T.init(node: $0)
+        }
     }
 
     func post<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> T {
@@ -73,6 +104,8 @@ class HTTPClient {
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
         }
+
+        try checkForStripeError(in: json)
 
         return try T.init(node: json.makeNode())
     }
@@ -83,8 +116,25 @@ class HTTPClient {
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
         }
+
+        try checkForStripeError(in: json)
         
         return json
+    }
+
+    private func checkForStripeError(in json: JSON) throws {
+        if let error = json.node["error"]?.nodeObject {
+
+            guard let type = error["type"]?.string else {
+                throw Abort.custom(status: .internalServerError, message: "Unknown error recieved from Stripe.")
+            }
+
+            guard let message = error["message"]?.string else {
+                throw Abort.custom(status: .internalServerError, message: "Unknown error of type \(type) recieved from Stripe.")
+            }
+
+            throw StripeError.error(type: type, message: message)
+        }
     }
 }
 
@@ -115,8 +165,8 @@ class Stripe: HTTPClient {
         return try post("accounts", query: ["managed" : true, "country" : "US", "email" : email])
     }
 
-    func associate(source: Source, withStripe id: String) throws -> Source {
-        return try post("customers/\(id)/sources", query: ["source" : id])
+    func associate(source: String, withStripe id: String) throws -> Card {
+        return try post("customers/\(id)/sources", query: ["source" : source])
     }
 
     func createPlan(with price: Double, name: String, interval: Interval) throws -> Plan {
@@ -138,12 +188,15 @@ class Stripe: HTTPClient {
         return subscription
     }
 
-//    func sources(forCustomer id: String) throws -> [Source] {
-//        return try get("customers/\(id)/sources", query: ["object" : "card"])
-//    }
-
-    func information(forCustomer id: String) throws -> Customer {
-        return try get("customers/\(id)")
+    func paymentInformation(for customer: String) throws -> [Card] {
+        return try get("customers/\(customer)/sources", query: ["object" : "card"])
     }
 
+    func information(for customer: String) throws -> Customer {
+        return try get("customers/\(customer)")
+    }
+
+    func delete(payment: String, from customer: String) throws {
+        try delete("customers/\(customer)/sources/\(payment)")
+    }
 }

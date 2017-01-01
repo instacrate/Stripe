@@ -21,14 +21,70 @@ class StripeTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
+    func testNormalAccount() {
         do {
             let token = try Stripe.shared.createToken()
-            let customer = try Stripe.shared.createNormalAccount(email: "\(NSUUID().uuidString)@test.test", source: token.id)
+            let customer = try Stripe.shared.createNormalAccount(email: "test_user_\(NSUUID().uuidString)@test.test", source: token.id)
+        } catch {
+            print(error)
+            XCTFail("failed generating stripe token")
+        }
+    }
+    
+    func testManagedAccount() {
+        do {
+            let token = try Stripe.shared.createToken()
+            let customer = try Stripe.shared.createManagedAccount(email: "test_user_\(NSUUID().uuidString)@test.test", source: token.id)
+        } catch {
+            print(error)
+            XCTFail("failed generating stripe token")
+        }
+    }
+    
+    func testAssociateTokenWithUser() {
+        do {
+            let token = try Stripe.shared.createToken()
+            let customer = try Stripe.shared.createNormalAccount(email: "test_user_\(NSUUID().uuidString)@test.test", source: token.id)
+
+            let token2 = try Stripe.shared.createToken()
+            let test = try Stripe.shared.associate(source: token2.id, withStripe: customer.id)
         } catch {
             print(error)
             XCTFail("failed generating stripe token")
         }
     }
 
+    func testCreatePlan() {
+        do {
+            let plan = try Stripe.shared.createPlan(with: 10.2, name: "test_plan_\(NSUUID().uuidString)", interval: .month)
+        } catch {
+            print(error)
+            XCTFail("failed generating stripe token")
+        }
+    }
+
+    func testSubscribeUserToPlan() {
+        do {
+            let plan = try Stripe.shared.createPlan(with: 10.2, name: "test_plan_\(NSUUID().uuidString)", interval: .month)
+            let token = try Stripe.shared.createToken()
+            let customer = try Stripe.shared.createNormalAccount(email: "test_user_\(NSUUID().uuidString)@test.test", source: token.id)
+
+            let subscription = try Stripe.shared.subscribe(user: customer.id, to: plan.id, oneTime: false)
+        } catch {
+            print(error)
+            XCTFail("failed generating stripe token")
+        }
+    }
+
+    func testGetPaymentMethods() {
+        do {
+            let token = try Stripe.shared.createToken()
+            let customer = try Stripe.shared.createNormalAccount(email: "test_user_\(NSUUID().uuidString)@test.test", source: token.id)
+
+            let sources = try Stripe.shared.paymentInformation(for: customer.id)
+        } catch {
+            print(error)
+            XCTFail("failed generating stripe token")
+        }
+    }
 }

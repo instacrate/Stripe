@@ -28,7 +28,7 @@ final class Plan: NodeConvertible {
     let interval_count: Int
     let livemode: Bool
     let name: String
-    let statement_descriptor: String
+    let statement_descriptor: String?
     let trial_period_days: Int?
     
     init(node: Node, in context: Context = EmptyNode) throws {
@@ -45,7 +45,7 @@ final class Plan: NodeConvertible {
         interval_count = try node.extract("interval_count")
         livemode = try node.extract("livemode")
         name = try node.extract("name")
-        statement_descriptor = try node.extract("statement_descriptor")
+        statement_descriptor = try? node.extract("statement_descriptor")
         trial_period_days = try node.extract("trial_period_days")
     }
     
@@ -59,7 +59,7 @@ final class Plan: NodeConvertible {
             "interval_count" : .number(.int(interval_count)),
             "livemode" : .bool(livemode),
             "name" : .string(name),
-            "statement_descriptor" : .string(statement_descriptor),
-        ] as [String : Node]).add(objects: ["trial_period_days" : trial_period_days])
+        ] as [String : Node]).add(objects: ["trial_period_days" : trial_period_days,
+                                            "statement_descriptor" :    statement_descriptor])
     }
 }
