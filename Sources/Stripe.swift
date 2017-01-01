@@ -139,7 +139,7 @@ public class HTTPClient {
 
 public final class Stripe: HTTPClient {
 
-    static let shared = Stripe()
+    public static let shared = Stripe()
 
     static let secretKey = "sk_test_6zSrUMIQfOCUorVvFMS2LEzn"
     static var encodedSecretKey: String {
@@ -152,28 +152,28 @@ public final class Stripe: HTTPClient {
         super.init(urlString: "https://api.stripe.com/v1/")
     }
 
-    func createToken() throws -> Token {
+    public func createToken() throws -> Token {
         return try post("tokens", query: ["card[number]" : 4242424242424242, "card[exp_month]" : 12, "card[exp_year]" : 2017, "card[cvc]" : 123])
     }
 
-    func createNormalAccount(email: String, source: String) throws -> Customer {
+    public func createNormalAccount(email: String, source: String) throws -> Customer {
         return try post("customers", query: ["source" : source])
     }
 
-    func createManagedAccount(email: String, source: String) throws -> Customer {
+    public func createManagedAccount(email: String, source: String) throws -> Customer {
         return try post("accounts", query: ["managed" : true, "country" : "US", "email" : email])
     }
 
-    func associate(source: String, withStripe id: String) throws -> Card {
+    public func associate(source: String, withStripe id: String) throws -> Card {
         return try post("customers/\(id)/sources", query: ["source" : source])
     }
 
-    func createPlan(with price: Double, name: String, interval: Interval) throws -> Plan {
+    public func createPlan(with price: Double, name: String, interval: Interval) throws -> Plan {
         let parameters = ["id" : "\(UUID().uuidString)", "amount" : "\(Int(price * 100))", "currency" : "usd", "interval" : interval.rawValue, "name" : name]
         return try post("plans", query: parameters)
     }
 
-    func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool) throws -> Subscription {
+    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool) throws -> Subscription {
         let subscription: Subscription = try post("subscriptions", query: ["customer" : userId, "plan" : planId])
 
         if oneTime {
@@ -187,15 +187,15 @@ public final class Stripe: HTTPClient {
         return subscription
     }
 
-    func paymentInformation(for customer: String) throws -> [Card] {
+    public func paymentInformation(for customer: String) throws -> [Card] {
         return try get("customers/\(customer)/sources", query: ["object" : "card"])
     }
 
-    func information(for customer: String) throws -> Customer {
+    public func information(for customer: String) throws -> Customer {
         return try get("customers/\(customer)")
     }
 
-    func delete(payment: String, from customer: String) throws {
+    public func delete(payment: String, from customer: String) throws {
         try delete("customers/\(customer)/sources/\(payment)")
     }
 }

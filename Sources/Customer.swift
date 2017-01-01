@@ -43,7 +43,7 @@ extension Node {
     }
 }
 
-final class Customer: NodeConvertible {
+public final class Customer: NodeConvertible {
     
     static let type = "customer"
     
@@ -60,7 +60,7 @@ final class Customer: NodeConvertible {
     let sources: [Card]
     let subscriptions: [Subscription]
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == Customer.type else {
             throw NodeError.unableToConvert(node: node, expected: Customer.type)
@@ -80,7 +80,7 @@ final class Customer: NodeConvertible {
         subscriptions = try node.extractList("subscriptions")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "account_balance" : .number(.int(account_balance)),

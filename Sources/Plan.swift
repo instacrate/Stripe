@@ -9,7 +9,7 @@
 import Foundation
 import Node
 
-enum Interval: String, NodeConvertible {
+public enum Interval: String, NodeConvertible {
     case day
     case week
     case month

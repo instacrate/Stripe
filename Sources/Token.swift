@@ -9,7 +9,7 @@
 import Foundation
 import Node
 
-class Token: NodeConvertible {
+public final class Token: NodeConvertible {
 
     static let type = "token"
 
@@ -21,7 +21,7 @@ class Token: NodeConvertible {
     let used: Bool
     let card: Card
 
-    required init(node: Node, in context: Context = EmptyNode) throws {
+    public required init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == Token.type else {
             throw NodeError.unableToConvert(node: node, expected: Token.type)
         }
@@ -35,7 +35,7 @@ class Token: NodeConvertible {
         card = try node.extract("card")
     }
 
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
             "id" : id,
             "client_ip" : client_ip,

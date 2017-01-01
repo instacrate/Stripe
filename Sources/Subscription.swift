@@ -18,7 +18,7 @@ enum SubscriptionStatus: String, NodeConvertible {
     case unpaid
 }
 
-final class Subscription: NodeConvertible {
+public final class Subscription: NodeConvertible {
     
     static let type = "subscription"
     
@@ -41,7 +41,7 @@ final class Subscription: NodeConvertible {
     let trial_end: Date?
     let trial_start: Date?
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == Subscription.type else {
             throw NodeError.unableToConvert(node: node, expected: Customer.type)
@@ -67,7 +67,7 @@ final class Subscription: NodeConvertible {
         trial_start = try? node.extract("trial_start")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "cancel_at_period_end" : .bool(cancel_at_period_end),
