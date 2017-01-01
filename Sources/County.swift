@@ -15,12 +15,12 @@ public final class IdentityVerification: NodeConvertible {
     let minimum: [String]
     let additional: [String]
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         minimum = try node.extract("minimum")
         additional = try node.extract("additional")
     }
     
-    func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             "minimum" : .array(minimum.map { Node.string($0) } ),
             "additional" : .array(minimum.map { Node.string($0) } )
