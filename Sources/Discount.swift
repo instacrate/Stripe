@@ -9,7 +9,7 @@
 import Foundation
 import Node
 
-final class Discount: NodeConvertible {
+public final class Discount: NodeConvertible {
     
     static let type = "discount"
     
@@ -19,7 +19,7 @@ final class Discount: NodeConvertible {
     let start: Date
     let subscription: String
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == Discount.type else {
             throw NodeError.unableToConvert(node: node, expected: Discount.type)
@@ -32,7 +32,7 @@ final class Discount: NodeConvertible {
         subscription = try node.extract("subscription")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "cupon" : coupon.makeNode(),
             "customer" : .string(customer),

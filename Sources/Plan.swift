@@ -16,7 +16,7 @@ enum Interval: String, NodeConvertible {
     case year
 }
 
-final class Plan: NodeConvertible {
+public final class Plan: NodeConvertible {
     
     static let type = "plan"
     
@@ -31,7 +31,7 @@ final class Plan: NodeConvertible {
     let statement_descriptor: String?
     let trial_period_days: Int?
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == Plan.type else {
             throw NodeError.unableToConvert(node: node, expected: Plan.type)
@@ -49,7 +49,7 @@ final class Plan: NodeConvertible {
         trial_period_days = try node.extract("trial_period_days")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "amount" : .number(.int(amount)),

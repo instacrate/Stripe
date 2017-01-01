@@ -56,8 +56,7 @@ extension Message {
     }
 }
 
-
-class HTTPClient {
+public class HTTPClient {
 
     let baseURLString: String
     let client: Client<TCPClientStream, Serializer<Request>, Parser<Response>>.Type
@@ -138,7 +137,7 @@ class HTTPClient {
     }
 }
 
-class Stripe: HTTPClient {
+public final class Stripe: HTTPClient {
 
     static let shared = Stripe()
 

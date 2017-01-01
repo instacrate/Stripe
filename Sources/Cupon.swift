@@ -16,7 +16,7 @@ enum Duration: String, NodeConvertible {
     case repeating
 }
 
-final class Cupon: NodeConvertible {
+public final class Cupon: NodeConvertible {
     
     static let type = "cupon"
     
@@ -33,7 +33,7 @@ final class Cupon: NodeConvertible {
     let times_redeemed: Int
     let valid: Bool
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == Cupon.type else {
             throw NodeError.unableToConvert(node: node, expected: Cupon.type)
         }
@@ -52,7 +52,7 @@ final class Cupon: NodeConvertible {
         valid = try node.extract("valid")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "created" : .number(.double(created.timeIntervalSince1970)),

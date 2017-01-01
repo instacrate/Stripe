@@ -10,7 +10,7 @@ import Foundation
 import Node
 import Vapor
 
-final class IdentityVerification: NodeConvertible {
+public final class IdentityVerification: NodeConvertible {
     
     let minimum: [String]
     let additional: [String]
@@ -28,7 +28,7 @@ final class IdentityVerification: NodeConvertible {
     }
 }
 
-final class County: NodeConvertible {
+public final class County: NodeConvertible {
     
     static let type = "country_spec"
     
@@ -40,7 +40,7 @@ final class County: NodeConvertible {
     let supported_payment_methods: [String]
     let verification_fields: IdentityVerification
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == County.type else {
             throw NodeError.unableToConvert(node: node, expected: County.type)
@@ -55,7 +55,7 @@ final class County: NodeConvertible {
         verification_fields = try node.extract("verification_fields")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "default_currency" : .string(default_currency),
@@ -68,7 +68,7 @@ final class County: NodeConvertible {
     }
 }
 
-enum CountryCode: String, NodeConvertible {
+public enum CountryCode: String, NodeConvertible {
     case af
     case ax
     case al
@@ -319,7 +319,7 @@ enum CountryCode: String, NodeConvertible {
     case zm
     case zw
 
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         guard let value = node.string else {
             throw Abort.custom(status: .internalServerError, message: "Expected \(String.self) for country code")
         }

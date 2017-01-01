@@ -40,7 +40,7 @@ internal extension Node {
 
 extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard let string = node.string else {
             throw NodeError.unableToConvert(node: node, expected: "\(String.self)")
@@ -53,7 +53,7 @@ extension RawRepresentable where Self: NodeConvertible, RawValue == String {
         self = value
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return Node.string(self.rawValue)
     }
 }
@@ -91,7 +91,7 @@ enum TokenizationMethod: String, NodeConvertible {
     case androidPay = "android_pay"
 }
 
-final class Card: NodeConvertible {
+public final class Card: NodeConvertible {
     
     static let type = "card"
     
@@ -132,7 +132,7 @@ final class Card: NodeConvertible {
     
     let tokenization_method: TokenizationMethod?
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         
         guard try node.extract("object") == Card.type else {
             throw NodeError.unableToConvert(node: node, expected: Card.type)
@@ -163,7 +163,7 @@ final class Card: NodeConvertible {
         tokenization_method = try? node.extract("tokenization_method")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
             "brand" : .string(brand.rawValue),
             "county" : .string(country.rawValue),
