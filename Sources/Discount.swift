@@ -13,11 +13,11 @@ public final class Discount: NodeConvertible {
     
     static let type = "discount"
     
-    let coupon: Cupon
-    let customer: String
-    let end: Date
-    let start: Date
-    let subscription: String
+    public let coupon: Cupon
+    public let customer: String
+    public let end: Date
+    public let start: Date
+    public let subscription: String
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

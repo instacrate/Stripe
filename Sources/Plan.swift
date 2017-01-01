@@ -20,16 +20,16 @@ public final class Plan: NodeConvertible {
     
     static let type = "plan"
     
-    let id: String
-    let amount: Int
-    let created: Date
-    let currency: Currency
-    let interval: Interval
-    let interval_count: Int
-    let livemode: Bool
-    let name: String
-    let statement_descriptor: String?
-    let trial_period_days: Int?
+    public let id: String
+    public let amount: Int
+    public let created: Date
+    public let currency: Currency
+    public let interval: Interval
+    public let interval_count: Int
+    public let livemode: Bool
+    public let name: String
+    public let statement_descriptor: String?
+    public let trial_period_days: Int?
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

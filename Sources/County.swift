@@ -12,8 +12,8 @@ import Vapor
 
 public final class IdentityVerification: NodeConvertible {
     
-    let minimum: [String]
-    let additional: [String]
+    public let minimum: [String]
+    public let additional: [String]
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         minimum = try node.extract("minimum")
@@ -32,13 +32,13 @@ public final class County: NodeConvertible {
     
     static let type = "country_spec"
     
-    let id: String
-    let default_currency: String
-    let string: String
-    let supported_bank_account_currencies: [String]
-    let supported_payment_currencies: [String]
-    let supported_payment_methods: [String]
-    let verification_fields: IdentityVerification
+    public let id: String
+    public let default_currency: String
+    public let string: String
+    public let supported_bank_account_currencies: [String]
+    public let supported_payment_currencies: [String]
+    public let supported_payment_methods: [String]
+    public let verification_fields: IdentityVerification
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

@@ -58,7 +58,7 @@ extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     }
 }
 
-enum Verification: String, NodeConvertible {
+public enum Verification: String, NodeConvertible {
     
     case pass
     case fail
@@ -66,7 +66,7 @@ enum Verification: String, NodeConvertible {
     case unchecked
 }
 
-enum Brand: String, NodeConvertible {
+public enum Brand: String, NodeConvertible {
     
     case visa = "Visa"
     case americanExpress = "American Express"
@@ -77,7 +77,7 @@ enum Brand: String, NodeConvertible {
     case unknwon = "Unknown"
 }
 
-enum Funding: String, NodeConvertible {
+public enum Funding: String, NodeConvertible {
     
     case credit
     case debit
@@ -85,7 +85,7 @@ enum Funding: String, NodeConvertible {
     case unknown
 }
 
-enum TokenizationMethod: String, NodeConvertible {
+public enum TokenizationMethod: String, NodeConvertible {
     
     case applePay = "apple_pay"
     case androidPay = "android_pay"
@@ -95,42 +95,42 @@ public final class Card: NodeConvertible {
     
     static let type = "card"
     
-    let address_city: String?
-    let address_county: String?
+    public let address_city: String?
+    public let address_county: String?
     
-    let address_line1: String?
-    let address_line2: String?
-    let address_line1_check: Verification?
+    public let address_line1: String?
+    public let address_line2: String?
+    public let address_line1_check: Verification?
     
-    let address_state: String?
+    public let address_state: String?
     
-    let address_zip: String?
-    let address_zip_check: Verification?
+    public let address_zip: String?
+    public let address_zip_check: Verification?
     
-    let brand: Brand
+    public let brand: Brand
     
-    let country: CountryCode
+    public let country: CountryCode
     
-    let currency: String?
-    let customer: String?
+    public let currency: String?
+    public let customer: String?
     
-    let cvc_check: Verification
-    let default_for_currency: Bool?
+    public let cvc_check: Verification
+    public let default_for_currency: Bool?
     
-    let dynamic_last4: String?
-    let last4: String
+    public let dynamic_last4: String?
+    public let last4: String
     
-    let exp_year: Int
-    let exp_month: Int
+    public let exp_year: Int
+    public let exp_month: Int
     
-    let fingerprint: String
+    public let fingerprint: String
     
-    let funding: Funding?
-    let name: String?
+    public let funding: Funding?
+    public let name: String?
     
-    let recipient: String?
+    public let recipient: String?
     
-    let tokenization_method: TokenizationMethod?
+    public let tokenization_method: TokenizationMethod?
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

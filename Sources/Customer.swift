@@ -47,18 +47,18 @@ public final class Customer: NodeConvertible {
     
     static let type = "customer"
     
-    let id: String
-    let account_balance: Int
-    let created: Date
-    let currency: Currency?
-    let default_source: String
-    let delinquent: Bool
-    let description: String?
-    let discount: Discount?
-    let email: String?
-    let livemode: Bool
-    let sources: [Card]
-    let subscriptions: [Subscription]
+    public let id: String
+    public let account_balance: Int
+    public let created: Date
+    public let currency: Currency?
+    public let default_source: String
+    public let delinquent: Bool
+    public let description: String?
+    public let discount: Discount?
+    public let email: String?
+    public let livemode: Bool
+    public let sources: [Card]
+    public let subscriptions: [Subscription]
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

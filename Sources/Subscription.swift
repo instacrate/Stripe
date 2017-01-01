@@ -9,7 +9,7 @@
 import Foundation
 import Node
 
-enum SubscriptionStatus: String, NodeConvertible {
+public enum SubscriptionStatus: String, NodeConvertible {
     
     case trialing
     case active
@@ -22,24 +22,24 @@ public final class Subscription: NodeConvertible {
     
     static let type = "subscription"
     
-    let id: String
-    let application_fee_percent: Double?
-    let cancel_at_period_end: Bool
-    let canceled_at: Date?
-    let created: Date
-    let current_period_end: Date
-    let current_period_start: Date
-    let customer: String
-    let discount: String?
-    let ended_at: Date?
-    let livemode: Bool
-    let plan: Plan
-    let quantity: Int
-    let start: Date
-    let status: SubscriptionStatus
-    let tax_percent: Double?
-    let trial_end: Date?
-    let trial_start: Date?
+    public let id: String
+    public let application_fee_percent: Double?
+    public let cancel_at_period_end: Bool
+    public let canceled_at: Date?
+    public let created: Date
+    public let current_period_end: Date
+    public let current_period_start: Date
+    public let customer: String
+    public let discount: String?
+    public let ended_at: Date?
+    public let livemode: Bool
+    public let plan: Plan
+    public let quantity: Int
+    public let start: Date
+    public let status: SubscriptionStatus
+    public let tax_percent: Double?
+    public let trial_end: Date?
+    public let trial_start: Date?
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         

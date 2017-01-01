@@ -13,13 +13,13 @@ public final class Token: NodeConvertible {
 
     static let type = "token"
 
-    let id: String
-    let client_ip: String
-    let created: Date
-    let livemode: Bool
-    let type: String
-    let used: Bool
-    let card: Card
+    public let id: String
+    public let client_ip: String
+    public let created: Date
+    public let livemode: Bool
+    public let type: String
+    public let used: Bool
+    public let card: Card
 
     public required init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == Token.type else {

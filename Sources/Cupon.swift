@@ -20,18 +20,18 @@ public final class Cupon: NodeConvertible {
     
     static let type = "cupon"
     
-    let id: String
-    let amount_off: Int?
-    let created: Date
-    let currency: String?
-    let duration: String
-    let duration_in_months: Int?
-    let livemode: Bool
-    let max_redemptions: Int
-    let percent_off: Int
-    let redeem_by: Date
-    let times_redeemed: Int
-    let valid: Bool
+    public let id: String
+    public let amount_off: Int?
+    public let created: Date
+    public let currency: String?
+    public let duration: String
+    public let duration_in_months: Int?
+    public let livemode: Bool
+    public let max_redemptions: Int
+    public let percent_off: Int
+    public let redeem_by: Date
+    public let times_redeemed: Int
+    public let valid: Bool
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == Cupon.type else {

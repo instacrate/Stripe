@@ -11,12 +11,12 @@ import Node
 
 public final class Address: NodeConvertible {
     
-    let city: String
-    let country: String
-    let line1: String
-    let line2: String
-    let postal_code: String
-    let state: String
+    public let city: String
+    public let country: String
+    public let line1: String
+    public let line2: String
+    public let postal_code: String
+    public let state: String
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         city = try node.extract("city")
@@ -41,14 +41,14 @@ public final class Address: NodeConvertible {
 
 public final class Owner: NodeConvertible {
     
-    let address: Address
-    let email: String
-    let name: String
-    let phone: String
-    let verified_address: Address
-    let verified_email: String
-    let verified_name: String
-    let verified_phone: String
+    public let address: Address
+    public let email: String
+    public let name: String
+    public let phone: String
+    public let verified_address: Address
+    public let verified_email: String
+    public let verified_name: String
+    public let verified_phone: String
     
     public init(node: Node, in context: Context) throws {
         address = try node.extract("address")
@@ -77,12 +77,12 @@ public final class Owner: NodeConvertible {
 
 public final class Reciever: NodeConvertible {
     
-    let address: String
-    let amount_charged: String
-    let amount_received: String
-    let amount_returned: String
-    let refund_attributes_method: String?
-    let refund_attributes_status: String?
+    public let address: String
+    public let amount_charged: String
+    public let amount_received: String
+    public let amount_returned: String
+    public let refund_attributes_method: String?
+    public let refund_attributes_status: String?
     
     public init(node: Node, in context: Context) throws {
         address = try node.extract("address")
@@ -104,20 +104,20 @@ public final class Reciever: NodeConvertible {
     }
 }
 
-enum Usage: String, NodeConvertible {
+public enum Usage: String, NodeConvertible {
     case reusable
     case singleUse = "single-use"
 }
 
 
-enum SourceStatus: String, NodeConvertible {
+public enum SourceStatus: String, NodeConvertible {
     case pending
     case chargeable
     case consumed
     case canceled
 }
 
-enum PaymentFlow: String, NodeConvertible {
+public enum PaymentFlow: String, NodeConvertible {
     case redirect
     case receiver
     case verification
@@ -126,8 +126,8 @@ enum PaymentFlow: String, NodeConvertible {
 
 public final class VerificationInformation: NodeConvertible {
     
-    let attempts_remaining: Int
-    let status: SourceStatus
+    public let attempts_remaining: Int
+    public let status: SourceStatus
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         attempts_remaining = try node.extract("attempts_remaining")
@@ -146,18 +146,18 @@ public final class Source: NodeConvertible {
     
     static let type = "source"
     
-    let id: String
-    let amount: Int
-    let client_secret: String
-    let created: Date
-    let currency: Currency
-    let flow: PaymentFlow
-    let livemode: Bool
-    let owner: Owner
-    let receiver: Reciever?
-    let status: SourceStatus
-    let type: String
-    let usage: Usage
+    public let id: String
+    public let amount: Int
+    public let client_secret: String
+    public let created: Date
+    public let currency: Currency
+    public let flow: PaymentFlow
+    public let livemode: Bool
+    public let owner: Owner
+    public let receiver: Reciever?
+    public let status: SourceStatus
+    public let type: String
+    public let usage: Usage
     
     public init(node: Node, in context: Context) throws {
         

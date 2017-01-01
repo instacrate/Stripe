@@ -10,7 +10,7 @@ import Foundation
 import Node
 import Vapor
 
-enum Currency: String, NodeConvertible {
+public enum Currency: String, NodeConvertible {
     
     case aed
     case all
@@ -127,7 +127,7 @@ enum Currency: String, NodeConvertible {
     case yer
     case zar
 
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         guard let value = node.string else {
             throw Abort.custom(status: .internalServerError, message: "Expected \(String.self) for currency code")
         }
