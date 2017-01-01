@@ -50,14 +50,14 @@ final class Customer: NodeConvertible {
     let id: String
     let account_balance: Int
     let created: Date
-    let currency: String
+    let currency: Currency?
     let default_source: String
     let delinquent: Bool
-    let description: String
+    let description: String?
     let discount: Discount?
-    let email: String
+    let email: String?
     let livemode: Bool
-    let sources: [Source]
+    let sources: [Card]
     let subscriptions: [Subscription]
     
     init(node: Node, in context: Context = EmptyNode) throws {
@@ -69,12 +69,12 @@ final class Customer: NodeConvertible {
         id = try node.extract("id")
         account_balance = try node.extract("account_balance")
         created = try node.extract("created")
-        currency = try node.extract("currency")
+        currency = try? node.extract("currency")
         default_source = try node.extract("default_source")
         delinquent = try node.extract("delinquent")
-        description = try node.extract("description")
+        description = try? node.extract("description")
         discount = try node.extract("discount")
-        email = try node.extract("email")
+        email = try? node.extract("email")
         livemode = try node.extract("livemode")
         sources = try node.extractList("sources")
         subscriptions = try node.extractList("subscriptions")
@@ -85,14 +85,14 @@ final class Customer: NodeConvertible {
             "id" : .string(id),
             "account_balance" : .number(.int(account_balance)),
             "created" : .number(.double(created.timeIntervalSince1970)),
-            "currency" : .string(currency),
             "default_source" : .string(default_source),
             "delinquent" : .bool(delinquent),
-            "description" : .string(description),
-            "email" : .string(email),
             "livemode" : .bool(livemode),
             "sources" :  .array(sources.map { try $0.makeNode() }),
             "subscriptions" : .array(subscriptions.map { try $0.makeNode() })
-        ] as [String : Node]).add(name: "discount", node: discount?.makeNode())
+            ] as [String : Node]).add(objects: ["discount" : discount,
+                                                "currency" : currency,
+                                                "description" : description,
+                                                "email" : email])
     }
 }

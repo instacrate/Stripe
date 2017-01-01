@@ -9,7 +9,7 @@
 import Foundation
 import JSON
 
-final class Parser {
+final class StripeObjectParser {
     
     static let typeLookup = ["card" : Card.self, "customer" : Customer.self, "subscription" : Subscription.self, "plan" : Plan.self, "country_spec" : County.self, "discount" : Discount.self, "coupn" : Cupon.self, "source" : Source.self] as [String : NodeConvertible.Type]
     
@@ -20,7 +20,7 @@ final class Parser {
             throw NodeError.unableToConvert(node: node, expected: "string at object")
         }
         
-        guard let type = Parser.typeLookup[string] else {
+        guard let type = StripeObjectParser.typeLookup[string] else {
             throw NodeError.unableToConvert(node: node, expected: "invalid object type")
         }
         

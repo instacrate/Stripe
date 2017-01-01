@@ -8,6 +8,7 @@
 
 import Foundation
 import Node
+import Vapor
 
 enum Currency: String, NodeConvertible {
     
@@ -125,4 +126,16 @@ enum Currency: String, NodeConvertible {
     case xpf
     case yer
     case zar
+
+    init(node: Node, in context: Context = EmptyNode) throws {
+        guard let value = node.string else {
+            throw Abort.custom(status: .internalServerError, message: "Expected \(String.self) for currency code")
+        }
+
+        guard let _self = Currency(rawValue: value.lowercased()) else {
+            throw Abort.custom(status: .internalServerError, message: "Currency code \(value.lowercased()) doesn't match any known codes.")
+        }
+
+        self = _self
+    }
 }
