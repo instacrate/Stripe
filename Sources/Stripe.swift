@@ -137,7 +137,7 @@ public class HTTPClient {
     }
 }
 
-public final class Stripe: HTTPClient {
+public class Stripe: HTTPClient {
 
     public static let shared = Stripe()
 
@@ -195,7 +195,11 @@ public final class Stripe: HTTPClient {
         return try get("customers/\(customer)")
     }
 
-    public func delete(payment: String, from customer: String) throws {
-        try delete("customers/\(customer)/sources/\(payment)")
+    public func delete(payment: String, from customer: String) throws -> JSON {
+        return try delete("customers/\(customer)/sources/\(payment)")
+    }
+
+    public func disputes() throws -> [Dispute] {
+        return try get("disputes")
     }
 }
