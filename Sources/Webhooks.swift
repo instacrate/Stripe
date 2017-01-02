@@ -9,6 +9,7 @@
 import Foundation
 import HTTP
 import Routing
+import Vapor
 
 enum WebhookAction: String {
 
@@ -34,7 +35,7 @@ private func parseEvent(fromRequest request: Request) throws -> (WebhookResource
     let _resource = components[0..<components.count - 1].joined(separator: ".").lowercased()
     let _action = components[components.count - 1].lowercased()
 
-    guard let resource = StripeResource(rawValue: _resource), let action = Action(rawValue: _action) else {
+    guard let resource = WebhookResource(rawValue: _resource), let action = WebhookAction(rawValue: _action) else {
         throw Abort.custom(status: .noContent, message: "Unsupported event type.")
     }
 

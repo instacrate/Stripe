@@ -10,6 +10,17 @@ import Foundation
 import Node
 import Vapor
 
+extension RawRepresentable where Self: NodeConvertible, RawValue == String {
+
+    public init?(from string: String) throws {
+        guard let value = Self.init(rawValue: string) else {
+            throw Abort.custom(status: .badRequest, message: "\(string) is not a valid value for for \(Self.self)")
+        }
+
+        self = value
+    }
+}
+
 public final class VerificationRequirement: NodeConvertible {
     
     public let minimum: [String]

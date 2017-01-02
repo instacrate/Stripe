@@ -9,11 +9,22 @@
 import Foundation
 import Node
 
-final class DeclineChargeRules: NodeConvertible {
+public final class DeclineChargeRules: NodeConvertible {
 
     public let avs_failure: Bool
     public let cvc_failure: Bool
 
+    public required init(node: Node, in context: Context = EmptyNode) throws {
+        avs_failure = try node.extract("avs_failure")
+        cvc_failure = try node.extract("cvc_failure")
+    }
+
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "avs_failure" : avs_failure,
+            "cvc_failure" : cvc_failure
+        ])
+    }
 }
 
 public enum VerificationStatus: String, NodeConvertible {
@@ -69,17 +80,18 @@ public class IdentityVerification: NodeConvertible {
         status = try node.extract("status")
         document = try node.extract("document")
         details = try node.extract("details")
+        details_code = try node.extract("details_code")
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "status" : status,
             "document" : document,
-            "details" : details
-            ])
+            "details" : details,
+            "details_code" : details_code
+        ])
     }
 }
-
 
 final class LegalEntity: NodeConvertible {
 
@@ -186,6 +198,6 @@ public final class TransferSchedule: NodeConvertible {
     }
 }
 
-final class Account: NodeConvertible {
+final class Account {
 
 }
