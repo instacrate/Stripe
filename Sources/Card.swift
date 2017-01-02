@@ -94,6 +94,8 @@ public enum TokenizationMethod: String, NodeConvertible {
 public final class Card: NodeConvertible {
     
     static let type = "card"
+
+    public let id: String
     
     public let address_city: String?
     public let address_county: String?
@@ -137,7 +139,8 @@ public final class Card: NodeConvertible {
         guard try node.extract("object") == Card.type else {
             throw NodeError.unableToConvert(node: node, expected: Card.type)
         }
-        
+
+        id = try node.extract("id")
         address_city = try node.extract("address_city")
         address_county = try node.extract("address_county")
         address_line1 = try node.extract("address_line1")
@@ -165,13 +168,14 @@ public final class Card: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
+            "id" : .string(id),
             "brand" : .string(brand.rawValue),
             "county" : .string(country.rawValue),
             "cvc_check" : .string(cvc_check.rawValue),
             "last4" : .string(last4),
             "exp_year" : .number(.int(exp_year)),
             "exp_month" : .number(.int(exp_month)),
-            "fingerprint" : .string(fingerprint),
+            "fingerprint" : .string(fingerprint)
             ] as [String : Node]).add(objects: ["currency" : currency,
                                                 "default_for_currency" : default_for_currency,
                                                 "dynamic_last4" : dynamic_last4,
