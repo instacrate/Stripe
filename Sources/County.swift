@@ -10,7 +10,7 @@ import Foundation
 import Node
 import Vapor
 
-public final class IdentityVerification: NodeConvertible {
+public final class VerificationRequirement: NodeConvertible {
     
     public let minimum: [String]
     public let additional: [String]
@@ -28,7 +28,25 @@ public final class IdentityVerification: NodeConvertible {
     }
 }
 
-public final class County: NodeConvertible {
+public final class CountryVerificationFields: NodeConvertible {
+
+    public let individual: VerificationRequirement
+    public let company: VerificationRequirement
+
+    public required init(node: Node, in context: Context = EmptyNode) throws {
+        individual = try node.extract("individual")
+        company = try node.extract("comany")
+    }
+
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "individual" : individual,
+            "company" : company
+        ])
+    }
+}
+
+public final class Country: NodeConvertible {
     
     static let type = "country_spec"
     
@@ -36,14 +54,14 @@ public final class County: NodeConvertible {
     public let default_currency: String
     public let string: String
     public let supported_bank_account_currencies: [String]
-    public let supported_payment_currencies: [String]
+    public let supported_payment_currencies: [Currency]
     public let supported_payment_methods: [String]
-    public let verification_fields: IdentityVerification
+    public let verification_fields: CountryVerificationFields
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         
-        guard try node.extract("object") == County.type else {
-            throw NodeError.unableToConvert(node: node, expected: County.type)
+        guard try node.extract("object") == Country.type else {
+            throw NodeError.unableToConvert(node: node, expected: Country.type)
         }
         
         id = try node.extract("id")
@@ -61,7 +79,7 @@ public final class County: NodeConvertible {
             "default_currency" : .string(default_currency),
             "string" : .string(string),
             "supported_bank_account_currencies" : .array(supported_bank_account_currencies.map { Node.string($0) } ),
-            "supported_payment_currencies" : .array(supported_payment_currencies.map { Node.string($0) } ),
+            "supported_payment_currencies" : .array(supported_payment_currencies.map { Node.string($0.rawValue) } ),
             "supported_payment_methods" : .array(supported_payment_methods.map { Node.string($0) } ),
             "verification_fields" : verification_fields.makeNode()
         ])

@@ -202,4 +202,8 @@ public class Stripe: HTTPClient {
     public func disputes() throws -> [Dispute] {
         return try get("disputes")
     }
+
+    public func verificationRequiremnts(for country: CountryCode) throws -> Country {
+        return try get("country_spec/\(country.rawValue)")
+    }
 }
