@@ -111,4 +111,13 @@ class StripeTests: XCTestCase {
             XCTFail("failed getting disputes")
         }
     }
+
+    func testGetCountrySpec() {
+        do {
+            let spec = try Stripe.shared.verificationRequiremnts(for: .us)
+        } catch {
+            print(error)
+            XCTFail("failed getting country spec")
+        }
+    }
 }

@@ -46,7 +46,7 @@ public final class CountryVerificationFields: NodeConvertible {
 
     public required init(node: Node, in context: Context = EmptyNode) throws {
         individual = try node.extract("individual")
-        company = try node.extract("comany")
+        company = try node.extract("company")
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
@@ -63,8 +63,7 @@ public final class Country: NodeConvertible {
     
     public let id: String
     public let default_currency: String
-    public let string: String
-    public let supported_bank_account_currencies: [String]
+    public let supported_bank_account_currencies: Node
     public let supported_payment_currencies: [Currency]
     public let supported_payment_methods: [String]
     public let verification_fields: CountryVerificationFields
@@ -77,7 +76,6 @@ public final class Country: NodeConvertible {
         
         id = try node.extract("id")
         default_currency = try node.extract("default_currency")
-        string = try node.extract("string")
         supported_bank_account_currencies = try node.extract("supported_bank_account_currencies")
         supported_payment_currencies = try node.extract("supported_payment_currencies")
         supported_payment_methods = try node.extract("supported_payment_methods")
@@ -88,8 +86,7 @@ public final class Country: NodeConvertible {
         return try Node(node: [
             "id" : .string(id),
             "default_currency" : .string(default_currency),
-            "string" : .string(string),
-            "supported_bank_account_currencies" : .array(supported_bank_account_currencies.map { Node.string($0) } ),
+            "supported_bank_account_currencies" : supported_bank_account_currencies,
             "supported_payment_currencies" : .array(supported_payment_currencies.map { Node.string($0.rawValue) } ),
             "supported_payment_methods" : .array(supported_payment_methods.map { Node.string($0) } ),
             "verification_fields" : verification_fields.makeNode()

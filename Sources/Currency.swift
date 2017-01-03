@@ -13,13 +13,19 @@ import Vapor
 public enum Currency: String, NodeConvertible {
     
     case aed
+    case afn
     case all
+    case amd
     case ang
+    case aoa
     case ars
     case aud
     case awg
+    case azn
+    case bam
     case bbd
     case bdt
+    case bgn
     case bif
     case bmd
     case bnd
@@ -29,6 +35,7 @@ public enum Currency: String, NodeConvertible {
     case bwp
     case bzd
     case cad
+    case cdf
     case chf
     case clp
     case cny
@@ -46,6 +53,7 @@ public enum Currency: String, NodeConvertible {
     case fjd
     case fkp
     case gbp
+    case gel
     case gip
     case gmd
     case gnf
@@ -63,6 +71,7 @@ public enum Currency: String, NodeConvertible {
     case jmd
     case jpy
     case kes
+    case kgs
     case khr
     case kmf
     case krw
@@ -72,8 +81,12 @@ public enum Currency: String, NodeConvertible {
     case lbp
     case lkr
     case lrd
+    case lsl
+    case ltl
     case mad
     case mdl
+    case mga
+    case mkd
     case mnt
     case mop
     case mro
@@ -82,6 +95,7 @@ public enum Currency: String, NodeConvertible {
     case mwk
     case mxn
     case myr
+    case mzn
     case nad
     case ngn
     case nio
@@ -96,7 +110,10 @@ public enum Currency: String, NodeConvertible {
     case pln
     case pyg
     case qar
+    case ron
+    case rsd
     case rub
+    case rwf
     case sar
     case sbd
     case scr
@@ -105,11 +122,14 @@ public enum Currency: String, NodeConvertible {
     case shp
     case sll
     case sos
+    case srd
     case std
     case svc
     case szl
     case thb
+    case tjs
     case top
+    case `try`
     case ttd
     case twd
     case tzs
@@ -122,10 +142,12 @@ public enum Currency: String, NodeConvertible {
     case vuv
     case wst
     case xaf
+    case xcd
     case xof
     case xpf
     case yer
     case zar
+    case zmw
 
     public init(node: Node, in context: Context = EmptyNode) throws {
         guard let value = node.string else {
