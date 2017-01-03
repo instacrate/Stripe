@@ -27,14 +27,14 @@ public final class DeclineChargeRules: NodeConvertible {
     }
 }
 
-public enum VerificationStatus: String, NodeConvertible {
+public enum LegalEntityVerificationStatus: String, NodeConvertible {
 
     case unverified
     case pending
     case verified
 }
 
-public enum VerificationFailureReason: String, NodeConvertible {
+public enum LegalEntityVerificationFailureReason: String, NodeConvertible {
 
     case scan_corrupt
     case scan_not_readable
@@ -65,16 +65,16 @@ public class Document: NodeConvertible {
             "id" : id,
             "created" : created,
             "size" : size
-            ])
+        ])
     }
 }
 
-public class IdentityVerification: NodeConvertible {
+public class LegalEntityIdentityVerification: NodeConvertible {
 
-    public let status: VerificationStatus
+    public let status: LegalEntityVerificationStatus
     public let document: Document
     public let details: String
-    public let details_code: VerificationFailureReason
+    public let details_code: LegalEntityVerificationFailureReason
 
     public required init(node: Node, in context: Context = EmptyNode) throws {
         status = try node.extract("status")
@@ -93,7 +93,7 @@ public class IdentityVerification: NodeConvertible {
     }
 }
 
-final class LegalEntity: NodeConvertible {
+public final class LegalEntity: NodeConvertible {
 
     public let address: String
     public let business_name: String
@@ -135,6 +135,37 @@ final class LegalEntity: NodeConvertible {
             "type" : type,
             "verification" : verification
         ])
+    }
+}
+
+public enum IdentityVerificationFailureReason: String, NodeConvertible {
+
+    case fraud = "rejected.fraud"
+    case tos = "rejected.terms_of_service"
+    case rejected_listed = "rejected.listed"
+    case rejected_other = "rejected.other"
+    case fields_needed
+    case listed
+    case other
+}
+
+public class IdentityVerification: NodeConvertible {
+
+    public let disabled_reason: IdentityVerificationFailureReason
+    public let due_by: Date?
+    public let fields_needed: [String]
+
+    public required init(node: Node, in context: Context = EmptyNode) throws {
+        disabled_reason = try node.extract("disabled_reason")
+        due_by = try node.extract("due_by")
+        fields_needed = try node.extract("fields_needed")
+    }
+
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "disabled_reason" : disabled_reason.makeNode(),
+            "fields_needed" : .array(fields_needed.map { Node.string($0) } ),
+        ] as [String : Node]).add(objects: ["due_by" : due_by])
     }
 }
 
@@ -200,13 +231,90 @@ public final class TransferSchedule: NodeConvertible {
 
 public final class Account: NodeConvertible {
 
-    public required init(node: Node, in context: Context) throws {
+    public let id: String
+    public let business_logo: String?
+    public let business_name: String?
+    public let business_url: String?
+    public let charges_enabled: Bool
+    public let country: CountryCode
+    public let debit_negative_balances: Bool
+    public let decline_charge_on: DeclineChargeRules
+    public let default_currency: Currency
+    public let details_submitted: Bool
+    public let display_name: String
+    public let email: String
+    public let external_accounts: Node
+    public let legal_entity: LegalEntity
+    public let managed: Bool
+    public let product_description: String?
+    public let statement_descriptor: String?
+    public let support_email: String?
+    public let support_phone: String?
+    public let timezone: String
+    public let tos_acceptance: TermsOfServiceAgreement
+    public let transfer_schedule: TransferSchedule
+    public let transfer_statement_descriptor: String?
+    public let transfers_enabled: Bool
+    public let verification: IdentityVerification
+    public let keys: String
 
+    public required init(node: Node, in context: Context) throws {
+        id = try node.extract("id")
+        business_logo = try? node.extract("business_logo")
+        business_name = try? node.extract("business_name")
+        business_url = try? node.extract("business_url")
+        charges_enabled = try node.extract("charges_enabled")
+        country = try node.extract("country")
+        debit_negative_balances = try node.extract("debit_negative_balances")
+        decline_charge_on = try node.extract("decline_charge_on")
+        default_currency = try node.extract("default_currency")
+        details_submitted = try node.extract("details_submitted")
+        display_name = try node.extract("display_name")
+        email = try node.extract("email")
+        external_accounts = try node.extract("external_accounts")
+        legal_entity = try node.extract("legal_entity")
+        managed = try node.extract("managed")
+        product_description = try node.extract("product_description")
+        statement_descriptor = try node.extract("statement_descriptor")
+        support_email = try node.extract("support_email")
+        support_phone = try node.extract("support_phone")
+        timezone = try node.extract("timezone")
+        tos_acceptance = try node.extract("tos_acceptance")
+        transfer_schedule = try node.extract("transfer_schedule")
+        transfer_statement_descriptor = try node.extract("transfer_statement_descriptor")
+        transfers_enabled = try node.extract("transfers_enabled")
+        verification = try node.extract("verification")
+        keys = try node.extract("keys")
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-
+            "id" : id,
+            "business_logo" : business_logo,
+            "business_name" : business_name,
+            "business_url" : business_url,
+            "charges_enabled" : charges_enabled,
+            "country" : country,
+            "debit_negative_balances" : debit_negative_balances,
+            "decline_charge_on" : decline_charge_on,
+            "default_currency" : default_currency,
+            "details_submitted" : details_submitted,
+            "display_name" : display_name,
+            "email" : email,
+            "external_accounts" : external_accounts,
+            "legal_entity" : legal_entity,
+            "managed" : managed,
+            "product_description" : product_description,
+            "statement_descriptor" : statement_descriptor,
+            "support_email" : support_email,
+            "support_phone" : support_phone,
+            "timezone" : timezone,
+            "tos_acceptance" : tos_acceptance,
+            "transfer_schedule" : transfer_schedule,
+            "transfer_statement_descriptor" : transfer_statement_descriptor,
+            "transfers_enabled" : transfers_enabled,
+            "verification" : verification,
+            "keys" : keys
         ])
     }
 
