@@ -11,14 +11,14 @@ import HTTP
 import Routing
 import Vapor
 
-enum WebhookAction: String {
+public enum WebhookAction: String {
 
     case updated
     case deleted
     case created
 }
 
-enum WebhookResource: String {
+public enum WebhookResource: String {
 
     case account
 }
@@ -50,7 +50,7 @@ public class StripeWebhookManager: RouteCollection {
 
     fileprivate var webhookHandlers: [WebhookResource : [WebhookAction : [(WebhookResource, WebhookAction, Request) throws -> (Response)]]] = [:]
 
-    func registerHandler(forResource resource: WebhookResource, action: WebhookAction, handler: @escaping (WebhookResource, WebhookAction, Request) throws -> Response) {
+    public func registerHandler(forResource resource: WebhookResource, action: WebhookAction, handler: @escaping (WebhookResource, WebhookAction, Request) throws -> Response) {
 
         var resourceHanderGroup = webhookHandlers[resource] ?? [:]
         var actionHandlerGroup = resourceHanderGroup[action] ?? []

@@ -198,6 +198,16 @@ public final class TransferSchedule: NodeConvertible {
     }
 }
 
-final class Account {
+public final class Account: NodeConvertible {
+
+    public required init(node: Node, in context: Context) throws {
+
+    }
+
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+
+        ])
+    }
 
 }

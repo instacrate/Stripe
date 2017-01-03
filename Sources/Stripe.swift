@@ -206,4 +206,8 @@ public class Stripe: HTTPClient {
     public func verificationRequiremnts(for country: CountryCode) throws -> Country {
         return try get("country_specs/\(country.rawValue.uppercased())")
     }
+
+    public func acceptedTermsOfService(for user: String, ip: String) throws -> Account {
+        return try post("accounts/\(user)", query: ["tos_acceptance[date]" : "\(Date().timeIntervalSince1970)", "tos_acceptance[ip]" : ip])
+    }
 }
