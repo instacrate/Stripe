@@ -219,4 +219,8 @@ public class Stripe: HTTPClient {
     public func acceptedTermsOfService(for user: String, ip: String) throws -> Account {
         return try post("accounts/\(user)", query: ["tos_acceptance[date]" : "\(Date().timeIntervalSince1970)", "tos_acceptance[ip]" : ip])
     }
+
+    public func updateInvoiceMetadata(for id: Int, invoice_id: String) throws -> JSON {
+        return try post("invoices/\(invoice_id)", query: ["metadata[orders]" : "\(id)"])
+    }
 }
