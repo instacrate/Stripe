@@ -8,19 +8,48 @@
 
 import Foundation
 import Node
+import Vapor
+
+extension Date {
+
+    public init(ISO8601String: String) throws {
+        let dateFormatter = DateFormatter()
+        let enUSPosixLocale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.locale = enUSPosixLocale
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+
+        guard let date = dateFormatter.date(from: ISO8601String) else {
+            throw Abort.custom(status: .internalServerError, message: "Error parsing date string : \(ISO8601String)")
+        }
+
+        self = date
+    }
+
+    public var ISO8601String: String {
+        let dateFormatter = DateFormatter()
+        let enUSPosixLocale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.locale = enUSPosixLocale
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+
+        return dateFormatter.string(from: self)
+    }
+}
 
 extension Date: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return .number(.double(self.timeIntervalSince1970))
+        return .string(self.ISO8601String)
     }
     
     public init(node: Node, in context: Context) throws {
-        guard let double = node.double else {
-            throw NodeError.unableToConvert(node: node, expected: "UNIX timestamp")
+
+        if case let .number(.double(value)) = node {
+            self = Date(timeIntervalSince1970: value)
+        } else if case let .string(value) = node {
+            self = try Date(ISO8601String: value)
+        } else {
+            throw NodeError.unableToConvert(node: node, expected: "UNIX timestamp or ISO string.")
         }
-        
-        self = Date(timeIntervalSince1970: double)
     }
 }
 

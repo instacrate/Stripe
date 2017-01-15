@@ -16,11 +16,18 @@ public enum WebhookAction: String {
     case updated
     case deleted
     case created
+
+    case pending
+    case failed
+    case refunded
+    case succeeded
 }
 
 public enum WebhookResource: String {
 
     case account
+    case charge
+    case invoice
 }
 
 private func parseEvent(fromRequest request: Request) throws -> (WebhookResource, WebhookAction) {
