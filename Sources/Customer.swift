@@ -43,8 +43,8 @@ extension Date: NodeConvertible {
     
     public init(node: Node, in context: Context) throws {
 
-        if case let .number(.double(value)) = node {
-            self = Date(timeIntervalSince1970: value)
+        if case let .number(numberNode) = node {
+            self = Date(timeIntervalSince1970: numberNode.double)
         } else if case let .string(value) = node {
             self = try Date(ISO8601String: value)
         } else {

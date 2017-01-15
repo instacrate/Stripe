@@ -152,6 +152,15 @@ public class Stripe: HTTPClient {
         super.init(urlString: "https://api.stripe.com/v1/")
     }
 
+    fileprivate func merge(query _query: [String: CustomStringConvertible], with metadata: [String: CustomStringConvertible]) -> [String: CustomStringConvertible] {
+        let arguments = metadata.map { ("metadata[\($0)]", $1) }
+
+        var query = _query
+        arguments.forEach { query[$0] = $1 }
+
+        return query
+    }
+
     public func createToken() throws -> Token {
         return try post("tokens", query: ["card[number]" : 4242424242424242, "card[exp_month]" : 12, "card[exp_year]" : 2017, "card[cvc]" : 123])
     }
@@ -173,8 +182,8 @@ public class Stripe: HTTPClient {
         return try post("plans", query: parameters)
     }
 
-    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool) throws -> Subscription {
-        let subscription: Subscription = try post("subscriptions", query: ["customer" : userId, "plan" : planId])
+    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, metadata: [String : CustomStringConvertible]) throws -> Subscription {
+        let subscription: Subscription = try post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId], with: metadata))
 
         if oneTime {
             let json = try delete("/subscriptions/\(subscription.id)", query: ["at_period_end" : true])
