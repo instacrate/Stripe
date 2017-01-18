@@ -9,55 +9,6 @@
 import Foundation
 import Node
 
-internal extension Node {
-    
-    func add(name: String, node: Node?) throws -> Node {
-        if let node = node {
-            return try add(name: name, node: node)
-        }
-        
-        return self
-    }
-    
-    func add(name: String, node: Node) throws -> Node {
-        guard var object = self.nodeObject else { throw NodeError.unableToConvert(node: self, expected: "[String: Node].self") }
-        object[name] = node
-        return try Node(node: object)
-    }
-    
-    func add(objects: [String : NodeConvertible?]) throws -> Node {
-        guard var nodeObject = self.nodeObject else { throw NodeError.unableToConvert(node: self, expected: "[String: Node].self") }
-        
-        for (name, object) in objects {
-            if let node = try object?.makeNode() {
-                nodeObject[name] = node
-            }
-        }
-        
-        return try Node(node: nodeObject)
-    }
-}
-
-extension RawRepresentable where Self: NodeConvertible, RawValue == String {
-    
-    public init(node: Node, in context: Context = EmptyNode) throws {
-        
-        guard let string = node.string else {
-            throw NodeError.unableToConvert(node: node, expected: "\(String.self)")
-        }
-        
-        guard let value = Self.init(rawValue: string) else {
-            throw NodeError.unableToConvert(node: nil, expected: "todo")
-        }
-        
-        self = value
-    }
-    
-    public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return Node.string(self.rawValue)
-    }
-}
-
 public enum Verification: String, NodeConvertible {
     
     case pass
@@ -96,42 +47,28 @@ public final class Card: NodeConvertible {
     static let type = "card"
 
     public let id: String
-    
     public let address_city: String?
     public let address_county: String?
-    
     public let address_line1: String?
     public let address_line2: String?
     public let address_line1_check: Verification?
-    
     public let address_state: String?
-    
     public let address_zip: String?
     public let address_zip_check: Verification?
-    
     public let brand: Brand
-    
     public let country: CountryCode
-    
     public let currency: String?
     public let customer: String?
-    
     public let cvc_check: Verification
     public let default_for_currency: Bool?
-    
     public let dynamic_last4: String?
     public let last4: String
-    
     public let exp_year: Int
     public let exp_month: Int
-    
     public let fingerprint: String
-    
     public let funding: Funding?
     public let name: String?
-    
     public let recipient: String?
-    
     public let tokenization_method: TokenizationMethod?
     
     public init(node: Node, in context: Context = EmptyNode) throws {
