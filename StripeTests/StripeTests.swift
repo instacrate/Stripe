@@ -120,4 +120,10 @@ class StripeTests: XCTestCase {
             XCTFail("failed getting country spec")
         }
     }
+    
+    func testGetInvoice() {
+        do {
+            let invoice = try Stripe.shared.updateInvoiceMetadata(for: <#T##Int#>, invoice_id: <#T##String#>)
+        }
+    }
 }

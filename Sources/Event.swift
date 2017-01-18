@@ -9,6 +9,36 @@
 import Foundation
 import Node
 
+public enum EventAction: String {
+    
+    case updated
+    case deleted
+    case created
+    
+    case pending
+    case failed
+    case refunded
+    case succeeded
+}
+
+public enum EventResource: String {
+    
+    case account
+    case charge
+    case invoice
+    
+    var internalModelType: NodeConvertible.Type {
+        switch self {
+        case .account:
+            return Account.self
+        case .charge:
+            return Charge.self
+        case .invoice:
+            return Invoice.self
+        }
+    }
+}
+
 final class Event: NodeConvertible {
     
     public let id: String
@@ -33,14 +63,15 @@ final class Event: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "id" : id,
-            "api_version" : api_version,
-            "created" : created,
+            "id" : .string(id),
+            "api_version" : .string(api_version),
+            "created" : try created.makeNode(),
             "data" : data,
-            "livemode" : livemode,
-            "pending_webhooks" : pending_webhooks,
-            "request" : request,
-            "type" : type
+            "livemode" : .bool(livemode),
+            "pending_webhooks" : .number(.int(pending_webhooks)),
+            "type" : .string(type)
+        ] as [String : Node]).add(objects: [
+            "request" : request
         ])
     }
 }

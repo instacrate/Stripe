@@ -137,7 +137,7 @@ public class HTTPClient {
     }
 }
 
-public class Stripe: HTTPClient {
+public final class Stripe: HTTPClient {
 
     public static let shared = Stripe()
 
@@ -220,7 +220,7 @@ public class Stripe: HTTPClient {
         return try post("accounts/\(user)", query: ["tos_acceptance[date]" : "\(Date().timeIntervalSince1970)", "tos_acceptance[ip]" : ip])
     }
 
-    public func updateInvoiceMetadata(for id: Int, invoice_id: String) throws -> JSON {
+    public func updateInvoiceMetadata(for id: Int, invoice_id: String) throws -> Invoice {
         return try post("invoices/\(invoice_id)", query: ["metadata[orders]" : "\(id)"])
     }
 }

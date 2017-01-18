@@ -11,37 +11,7 @@ import HTTP
 import Routing
 import Vapor
 
-public enum WebhookAction: String {
-
-    case updated
-    case deleted
-    case created
-
-    case pending
-    case failed
-    case refunded
-    case succeeded
-}
-
-public enum WebhookResource: String {
-
-    case account
-    case charge
-    case invoice
-    
-    var internalModelType: NodeConvertible.Type {
-        switch self {
-        case .account:
-            return Account.self
-        case .charge:
-            return Charge.self
-        case .invoice:
-            return Invoice.self
-        }
-    }
-}
-
-private func parseEvent(fromRequest request: Request) throws -> (WebhookResource, WebhookAction) {
+private func parseEvent(fromRequest request: Request) throws -> (EventResource, EventAction) {
     let json = try request.json()
 
     guard let eventType = json["type"]?.string else {
@@ -53,27 +23,25 @@ private func parseEvent(fromRequest request: Request) throws -> (WebhookResource
     let _resource = components[0..<components.count - 1].joined(separator: ".").lowercased()
     let _action = components[components.count - 1].lowercased()
 
-    guard let resource = WebhookResource(rawValue: _resource), let action = WebhookAction(rawValue: _action) else {
+    guard let resource = EventResource(rawValue: _resource), let action = EventAction(rawValue: _action) else {
         throw Abort.custom(status: .internalServerError, message: "Unsupported event type.")
     }
 
     return (resource, action)
 }
 
-public class StripeWebhookManager: RouteCollection {
+public final class StripeWebhookManager: RouteCollection {
 
     public static let shared = StripeWebhookManager()
 
     public typealias Wrapped = HTTP.Responder
 
-    fileprivate var webhookHandlers: [WebhookResource : [WebhookAction : (WebhookResource, WebhookAction, Request) throws -> (Response)]] = [:]
+    fileprivate var webhookHandlers: [EventResource : [EventAction : (EventResource, EventAction, Request) throws -> (Response)]] = [:]
 
-    public func registerHandler(forResource resource: WebhookResource, action: WebhookAction, handler: @escaping (WebhookResource, WebhookAction, Request) throws -> Response) {
+    public func registerHandler(forResource resource: EventResource, action: EventAction, handler: @escaping (EventResource, EventAction, Request) throws -> Response) {
 
         var resourceHanderGroup = webhookHandlers[resource] ?? [:]
-
         resourceHanderGroup[action] = handler
-
         webhookHandlers[resource] = resourceHanderGroup
     }
 

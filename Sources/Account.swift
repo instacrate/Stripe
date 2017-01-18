@@ -10,45 +10,24 @@ import Foundation
 import Node
 
 public final class DeclineChargeRules: NodeConvertible {
-
+    
     public let avs_failure: Bool
     public let cvc_failure: Bool
-
+    
     public required init(node: Node, in context: Context = EmptyNode) throws {
         avs_failure = try node.extract("avs_failure")
         cvc_failure = try node.extract("cvc_failure")
     }
-
+    
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "avs_failure" : avs_failure,
-            "cvc_failure" : cvc_failure
-        ])
+            "avs_failure" : .bool(avs_failure),
+            "cvc_failure" : .bool(cvc_failure)
+        ] as [String : Node])
     }
 }
 
-public enum LegalEntityVerificationStatus: String, NodeConvertible {
-
-    case unverified
-    case pending
-    case verified
-}
-
-public enum LegalEntityVerificationFailureReason: String, NodeConvertible {
-
-    case scan_corrupt
-    case scan_not_readable
-    case scan_failed_greyscale
-    case scan_not_uploaded
-    case scan_id_type_not_supported
-    case scan_id_country_not_supported
-    case scan_name_mismatch
-    case scan_failed_other
-    case failed_keyed_identity
-    case failed_other
-}
-
-public class Document: NodeConvertible {
+public final class Document: NodeConvertible {
 
     public let id: String
     public let created: Date
@@ -62,110 +41,10 @@ public class Document: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "id" : id,
-            "created" : created,
-            "size" : size
-        ])
-    }
-}
-
-public class LegalEntityIdentityVerification: NodeConvertible {
-
-    public let status: LegalEntityVerificationStatus
-    public let document: Document
-    public let details: String
-    public let details_code: LegalEntityVerificationFailureReason
-
-    public required init(node: Node, in context: Context = EmptyNode) throws {
-        status = try node.extract("status")
-        document = try node.extract("document")
-        details = try node.extract("details")
-        details_code = try node.extract("details_code")
-    }
-
-    public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: [
-            "status" : status,
-            "document" : document,
-            "details" : details,
-            "details_code" : details_code
-        ])
-    }
-}
-
-public final class LegalEntity: NodeConvertible {
-
-    public let address: String
-    public let business_name: String
-    public let business_tax_id_provided: String
-    public let dob: String
-    public let first_name: String
-    public let last_name: String
-    public let personal_address: String
-    public let personal_id_number_provided: String
-    public let ssn_last_4_provided: String
-    public let type: String
-    public let verification: String
-
-    public required init(node: Node, in context: Context = EmptyNode) throws {
-        address = try node.extract("address")
-        business_name = try node.extract("business_name")
-        business_tax_id_provided = try node.extract("business_tax_id_provided")
-        dob = try node.extract("dob")
-        first_name = try node.extract("first_name")
-        last_name = try node.extract("last_name")
-        personal_address = try node.extract("personal_address")
-        personal_id_number_provided = try node.extract("personal_id_number_provided")
-        ssn_last_4_provided = try node.extract("ssn_last_4_provided")
-        type = try node.extract("type")
-        verification = try node.extract("verification")
-    }
-
-    public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: [
-            "address" : address,
-            "business_name" : business_name,
-            "business_tax_id_provided" : business_tax_id_provided,
-            "dob" : dob,
-            "first_name" : first_name,
-            "last_name" : last_name,
-            "personal_address" : personal_address,
-            "personal_id_number_provided" : personal_id_number_provided,
-            "ssn_last_4_provided" : ssn_last_4_provided,
-            "type" : type,
-            "verification" : verification
-        ])
-    }
-}
-
-public enum IdentityVerificationFailureReason: String, NodeConvertible {
-
-    case fraud = "rejected.fraud"
-    case tos = "rejected.terms_of_service"
-    case rejected_listed = "rejected.listed"
-    case rejected_other = "rejected.other"
-    case fields_needed
-    case listed
-    case other
-}
-
-public class IdentityVerification: NodeConvertible {
-
-    public let disabled_reason: IdentityVerificationFailureReason
-    public let due_by: Date?
-    public let fields_needed: [String]
-
-    public required init(node: Node, in context: Context = EmptyNode) throws {
-        disabled_reason = try node.extract("disabled_reason")
-        due_by = try node.extract("due_by")
-        fields_needed = try node.extract("fields_needed")
-    }
-
-    public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: [
-            "disabled_reason" : disabled_reason.makeNode(),
-            "fields_needed" : .array(fields_needed.map { Node.string($0) } ),
-        ] as [String : Node]).add(objects: ["due_by" : due_by])
+            "id" : .string(id),
+            "created" : try created.makeNode(),
+            "size" : .number(.int(size))
+        ] as [String : Node])
     }
 }
 
@@ -183,10 +62,10 @@ public final class DateOfBirth: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "day" : day,
-            "month" : month,
-            "year" : year
-        ])
+            "day" : .number(.int(day)),
+            "month" : .number(.int(month)),
+            "year" : .number(.int(year))
+        ] as [String : Node])
     }
 }
 
@@ -203,7 +82,7 @@ public final class TermsOfServiceAgreement: NodeConvertible {
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: [
+        return try Node(node: []).add(objects: [
             "date" : date,
             "ip" : ip,
             "user_agent" : user_agent
@@ -223,9 +102,9 @@ public final class TransferSchedule: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "delay_days" : delay_days,
-            "interval" : interval
-        ])
+            "delay_days" : .number(.int(delay_days)),
+            "interval" : try interval.makeNode()
+        ] as [String : Node])
     }
 }
 
@@ -296,33 +175,33 @@ public final class Account: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "id" : id,
+            "id" : .string(id),
+            "charges_enabled" : .bool(charges_enabled),
+            "country" : try country.makeNode(),
+            "debit_negative_balances" : .bool(debit_negative_balances),
+            "decline_charge_on" : try decline_charge_on.makeNode(),
+            "default_currency" : try default_currency.makeNode(),
+            "details_submitted" : .bool(details_submitted),
+            "display_name" : .string(display_name),
+            "email" : .string(email),
+            "external_accounts" : external_accounts,
+            "legal_entity" : try legal_entity.makeNode(),
+            "managed" : .bool(managed),
+            "timezone" : .string(timezone),
+            "tos_acceptance" : try tos_acceptance.makeNode(),
+            "transfer_schedule" : try transfer_schedule.makeNode(),
+            "transfers_enabled" : .bool(transfers_enabled),
+            "verification" : try verification.makeNode(),
+            "keys" : .string(keys)
+        ] as [String : Node]).add(objects: [
             "business_logo" : business_logo,
             "business_name" : business_name,
             "business_url" : business_url,
-            "charges_enabled" : charges_enabled,
-            "country" : country,
-            "debit_negative_balances" : debit_negative_balances,
-            "decline_charge_on" : decline_charge_on,
-            "default_currency" : default_currency,
-            "details_submitted" : details_submitted,
-            "display_name" : display_name,
-            "email" : email,
-            "external_accounts" : external_accounts,
-            "legal_entity" : legal_entity,
-            "managed" : managed,
             "product_description" : product_description,
             "statement_descriptor" : statement_descriptor,
             "support_email" : support_email,
             "support_phone" : support_phone,
-            "timezone" : timezone,
-            "tos_acceptance" : tos_acceptance,
-            "transfer_schedule" : transfer_schedule,
-            "transfer_statement_descriptor" : transfer_statement_descriptor,
-            "transfers_enabled" : transfers_enabled,
-            "verification" : verification,
-            "keys" : keys
+            "transfer_statement_descriptor" : transfer_statement_descriptor
         ])
     }
-
 }

@@ -25,8 +25,8 @@ public final class Review: NodeConvertible {
 
     public let id: String
     public let charge: String
-    public let created: String
-    public let livemode: String
+    public let created: Date
+    public let livemode: Bool
     public let open: Bool
     public let reason: ReviewReason
 
@@ -46,12 +46,12 @@ public final class Review: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "id" : id,
-            "charge" : charge,
-            "created" : created,
-            "livemode" : livemode,
-            "open" : open,
-            "reason" : reason
-        ])
+            "id" : .string(id),
+            "charge" : .string(charge),
+            "created" : try created.makeNode(),
+            "livemode" : .bool(livemode),
+            "open" : .bool(open),
+            "reason" : try reason.makeNode()
+        ] as [String : Node])
     }
 }

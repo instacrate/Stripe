@@ -37,13 +37,13 @@ public final class Token: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "id" : id,
-            "client_ip" : client_ip,
-            "created" : created,
-            "livemode" : livemode,
-            "type" : type,
-            "used" : used,
+            "id" : .string(id),
+            "client_ip" : .string(client_ip),
+            "created" : try created.makeNode(),
+            "livemode" : .bool(livemode),
+            "type" : .string(type),
+            "used" : .bool(used),
             "card" : card.makeNode()
-        ])
+        ] as [String : Node])
     }
 }

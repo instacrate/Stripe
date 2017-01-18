@@ -9,31 +9,31 @@
 import Foundation
 import Node
 
-final class Period: NodeConvertible {
+public final class Period: NodeConvertible {
     
     public let start: Date
     public let end: Date
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         start = try node.extract("start")
         end = try node.extract("end")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "start" : start,
-            "end" : end
-        ])
+            "start" : try start.makeNode(),
+            "end" : try end.makeNode()
+        ] as [String : Node])
     }
 }
 
-enum LineItemType: String, NodeConvertible {
+public enum LineItemType: String, NodeConvertible {
     
     case invoiceitem
     case subscription
 }
 
-final class LineItem: NodeConvertible {
+public final class LineItem: NodeConvertible {
     
     static let type = "line_item"
     
@@ -52,7 +52,7 @@ final class LineItem: NodeConvertible {
     public let subscription_item: String
     public let type: LineItemType
     
-    init(node: Node, in context: Context = EmptyNode) throws {
+    public init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == LineItem.type else {
             throw NodeError.unableToConvert(node: node, expected: Cupon.type)
         }
@@ -73,27 +73,28 @@ final class LineItem: NodeConvertible {
         type = try node.extract("type")
     }
     
-    func makeNode(context: Context = EmptyNode) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "id" : id,
-            "amount" : amount,
-            "currency" : currency,
-            "description" : description,
-            "discountable" : discountable,
-            "livemode" : livemode,
+            "id" : .string(id),
+            "amount" : .number(.int(amount)),
+            "currency" : try currency.makeNode(),
+            "discountable" : .bool(discountable),
+            "livemode" : .bool(livemode),
             "metadata" : metadata,
-            "period" : period,
-            "plan" : plan,
-            "proration" : proration,
-            "quantity" : quantity,
-            "subscription" : subscription,
-            "subscription_item" : subscription_item,
-            "type" : type
+            "period" : try period.makeNode(),
+            "plan" : try plan.makeNode(),
+            "proration" : .bool(proration),
+            "quantity" : .number(.int(quantity)),
+            "subscription" : try subscription.makeNode(),
+            "subscription_item" : .string(subscription_item),
+            "type" : try type.makeNode()
+        ] as [String : Node]).add(objects: [
+            "description" : description
         ])
     }
 }
 
-final class Invoice: NodeConvertible {
+public final class Invoice: NodeConvertible {
     
     static let type = "invoice"
     
@@ -128,7 +129,7 @@ final class Invoice: NodeConvertible {
     public let total: Int
     public let webhooks_delivered_at: Date
     
-    init(node: Node, in context: Context) throws {
+    public init(node: Node, in context: Context) throws {
         guard try node.extract("object") == Invoice.type else {
             throw NodeError.unableToConvert(node: node, expected: Cupon.type)
         }
@@ -165,7 +166,7 @@ final class Invoice: NodeConvertible {
         webhooks_delivered_at = try node.extract("webhooks_delivered_at")
     }
     
-    func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "amount_due" : .number(.int(amount_due)),

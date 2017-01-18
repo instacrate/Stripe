@@ -138,7 +138,7 @@ public final class VerificationInformation: NodeConvertible {
         return try Node(node: [
             "attempts_remaining" : .number(.int(attempts_remaining)),
             "status" : .string(status.rawValue)
-        ])
+        ] as [String : Node])
     }
 }
 

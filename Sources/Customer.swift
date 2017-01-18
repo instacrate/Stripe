@@ -119,9 +119,11 @@ public final class Customer: NodeConvertible {
             "livemode" : .bool(livemode),
             "sources" :  .array(sources.map { try $0.makeNode() }),
             "subscriptions" : .array(subscriptions.map { try $0.makeNode() })
-            ] as [String : Node]).add(objects: ["discount" : discount,
-                                                "currency" : currency,
-                                                "description" : description,
-                                                "email" : email])
+        ] as [String : Node]).add(objects: [
+            "discount" : discount,
+            "currency" : currency,
+            "description" : description,
+            "email" : email
+        ])
     }
 }

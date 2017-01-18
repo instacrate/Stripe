@@ -11,10 +11,10 @@ import Node
 
 public final class DisputeInfo: NodeConvertible {
 
-    public let due_by: String
-    public let has_evidence: String
-    public let past_due: String
-    public let submission_count: String
+    public let due_by: Date
+    public let has_evidence: Bool
+    public let past_due: Bool
+    public let submission_count: Int
 
     public init(node: Node, in context: Context = EmptyNode) throws {
 
@@ -26,11 +26,11 @@ public final class DisputeInfo: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "due_by" : due_by,
-            "has_evidence" : has_evidence,
-            "past_due" : past_due,
-            "submission_count" : submission_count
-        ])
+            "due_by" : try due_by.makeNode(),
+            "has_evidence" : .bool(has_evidence),
+            "past_due" : .bool(past_due),
+            "submission_count" : .number(.int(submission_count))
+        ] as [String : Node])
     }
 }
 
@@ -102,17 +102,17 @@ public final class Dispute: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "amount" : amount,
+            "amount" : .number(.int(amount)),
             "balance_transactions" : balance_transactions,
-            "charge" : charge,
-            "created" : created,
-            "currency" : currency,
-            "evidence" : evidence,
-            "evidence_details" : evidence_details,
-            "is_charge_refundable" : is_charge_refundable,
-            "livemode" : livemode,
-            "reason" : reason,
-            "status" : status
-        ])
+            "charge" : .string(charge),
+            "created" : try created.makeNode(),
+            "currency" : try currency.makeNode(),
+            "evidence" : try evidence.makeNode(),
+            "evidence_details" : try evidence_details.makeNode(),
+            "is_charge_refundable" : .bool(is_charge_refundable),
+            "livemode" : .bool(livemode),
+            "reason" : try reason.makeNode(),
+            "status" : try status.makeNode()
+        ] as [String : Node])
     }
 }

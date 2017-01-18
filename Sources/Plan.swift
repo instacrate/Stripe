@@ -59,7 +59,9 @@ public final class Plan: NodeConvertible {
             "interval_count" : .number(.int(interval_count)),
             "livemode" : .bool(livemode),
             "name" : .string(name),
-        ] as [String : Node]).add(objects: ["trial_period_days" : trial_period_days,
-                                            "statement_descriptor" :    statement_descriptor])
+        ] as [String : Node]).add(objects: [
+            "trial_period_days" : trial_period_days,
+            "statement_descriptor" : statement_descriptor
+        ])
     }
 }

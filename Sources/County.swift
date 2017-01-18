@@ -51,9 +51,9 @@ public final class CountryVerificationFields: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "individual" : individual,
-            "company" : company
-        ])
+            "individual" : try individual.makeNode(),
+            "company" : try company.makeNode()
+        ] as [String : Node])
     }
 }
 
@@ -90,7 +90,7 @@ public final class Country: NodeConvertible {
             "supported_payment_currencies" : .array(supported_payment_currencies.map { Node.string($0.rawValue) } ),
             "supported_payment_methods" : .array(supported_payment_methods.map { Node.string($0) } ),
             "verification_fields" : verification_fields.makeNode()
-        ])
+        ] as [String : Node])
     }
 }
 

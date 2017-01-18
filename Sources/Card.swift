@@ -176,21 +176,23 @@ public final class Card: NodeConvertible {
             "exp_year" : .number(.int(exp_year)),
             "exp_month" : .number(.int(exp_month)),
             "fingerprint" : .string(fingerprint)
-            ] as [String : Node]).add(objects: ["currency" : currency,
-                                                "default_for_currency" : default_for_currency,
-                                                "dynamic_last4" : dynamic_last4,
-                                                "tokenization_method" : tokenization_method,
-                                                "address_line1_check" : address_line1_check,
-                                                "address_zip_check" : address_zip_check,
-                                                "address_city" : address_city,
-                                                "address_county" : address_county,
-                                                "address_line1" : address_line1,
-                                                "address_line2" : address_line2,
-                                                "address_state" : address_state,
-                                                "address_zip" : address_zip,
-                                                "funding" : funding,
-                                                "name" : name,
-                                                "recipient" : recipient,
-                                                "customer" : customer])
+        ] as [String : Node]).add(objects: [
+            "currency" : currency,
+            "default_for_currency" : default_for_currency,
+            "dynamic_last4" : dynamic_last4,
+            "tokenization_method" : tokenization_method,
+            "address_line1_check" : address_line1_check,
+            "address_zip_check" : address_zip_check,
+            "address_city" : address_city,
+            "address_county" : address_county,
+            "address_line1" : address_line1,
+            "address_line2" : address_line2,
+            "address_state" : address_state,
+            "address_zip" : address_zip,
+            "funding" : funding,
+            "name" : name,
+            "recipient" : recipient,
+            "customer" : customer
+        ])
     }
 }

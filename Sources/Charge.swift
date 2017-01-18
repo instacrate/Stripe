@@ -28,9 +28,9 @@ public final class Rule: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "action" : action,
-            "predicate" : predicate
-        ])
+            "action" : try action.makeNode(),
+            "predicate" : .string(predicate)
+        ] as [String : Node])
     }
 }
 
@@ -76,12 +76,12 @@ public final class Outcome: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "network_status" : network_status,
-            "reason" : reason,
-            "risk_level" : risk_level,
-            "seller_message" : seller_message,
-            "type" : type
-        ])
+            "network_status" : try network_status.makeNode(),
+            "reason" : .string(reason),
+            "risk_level" : .string(risk_level),
+            "seller_message" : .string(seller_message),
+            "type" : try type.makeNode()
+        ] as [String : Node])
     }
 }
 
@@ -112,11 +112,11 @@ public final class Shipping: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "address" : address,
-            "name" : name,
-            "tracking_number" : tracking_number,
-            "phone" : phone
-        ])
+            "address" : try address.makeNode(),
+            "name" : .string(name),
+            "tracking_number" : .string(tracking_number),
+            "phone" : .string(phone)
+        ] as [String : Node])
     }
 }
 
@@ -206,37 +206,39 @@ public final class Charge: NodeConvertible {
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node : [
-            "id" : id,
-            "amount" : amount,
-            "amount_refunded" : amount_refunded,
+            "id" : .string(id),
+            "amount" : .number(.int(amount)),
+            "amount_refunded" : .number(.int(amount_refunded)),
+            "balance_transaction" : .string(balance_transaction),
+            "captured" : .bool(captured),
+            "created" : try created.makeNode(),
+            "currency" : try currency.makeNode(),
+            "customer" : .string(customer),
+            "fraud_details" : fraud_details,
+            "invoice" : .string(invoice),
+            "livemode" : .bool(livemode),
+            "outcome" : try outcome.makeNode(),
+            "paid" : .bool(paid),
+            "refunded" : .bool(refunded),
+            "refunds" : refunds,
+            "source" : try source.makeNode(),
+            "transfer" : .string(transfer)
+        ] as [String : Node]).add(objects: [
             "application" : application,
             "application_fee" : application_fee,
-            "balance_transaction" : balance_transaction,
-            "captured" : captured,
-            "created" : created,
-            "currency" : currency,
-            "customer" : customer,
             "description" : description,
             "destination" : destination,
             "dispute" : dispute,
             "failure_code" : failure_code,
             "failure_message" : failure_message,
-            "fraud_details" : fraud_details,
-            "invoice" : invoice,
-            "livemode" : livemode,
             "order" : order,
-            "outcome" : outcome,
-            "paid" : paid,
             "receipt_email" : receipt_email,
             "receipt_number" : receipt_number,
-            "refunded" : refunded,
-            "refunds" : refunds,
-            "review" : review,
-            "shipping" : shipping,
-            "source" : source,
             "source_transfer" : source_transfer,
             "statement_descriptor" : statement_descriptor,
-            "status" : status
+            "status" : status,
+            "review" : review,
+            "shipping" : shipping
         ])
     }
 }

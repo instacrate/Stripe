@@ -71,33 +71,37 @@ public final class DisputeEvidence: NodeConvertible {
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: []).add(objects: ["access_activity_log" : access_activity_log,
-                                                "billing_address" : billing_address,
-                                                "cancellation_policy" : cancellation_policy,
-                                                "cancellation_policy_disclosure" : cancellation_policy_disclosure,
-                                                "cancellation_rebuttal" : cancellation_rebuttal,
-                                                "customer_communication" : customer_communication,
-                                                "customer_email_address" : customer_email_address,
-                                                "customer_name" : customer_name,
-                                                "customer_purchase_ip" : customer_purchase_ip,
-                                                "customer_signature" : customer_signature,
-                                                "duplicate_charge_documentation" : duplicate_charge_documentation,
-                                                "duplicate_charge_explanation" : duplicate_charge_explanation,
-                                                "duplicate_charge_id" : duplicate_charge_id,
-                                                "product_description" : product_description,
-                                                "receipt" : receipt,
-                                                "refund_policy" : refund_policy,
-                                                "refund_policy_disclosure" : refund_policy_disclosure,
-                                                "refund_refusal_explanation" : refund_refusal_explanation,
-                                                "service_date" : service_date,
-                                                "service_documentation" : service_documentation,
-                                                "shipping_address" : shipping_address,
-                                                "shipping_carrier" : shipping_carrier,
-                                                "shipping_date" : shipping_date,
-                                                "shipping_documentation" : shipping_documentation,
-                                                "shipping_tracking_number" : shipping_tracking_number,
-                                                "uncategorized_file" : uncategorized_file,
-                                                "uncategorized_text" : uncategorized_text])
+        // TODO : Make init method that accepts optional values
+        
+        return try Node(node: []).add(objects: [
+            "access_activity_log" : access_activity_log,
+            "billing_address" : billing_address,
+            "cancellation_policy" : cancellation_policy,
+            "cancellation_policy_disclosure" : cancellation_policy_disclosure,
+            "cancellation_rebuttal" : cancellation_rebuttal,
+            "customer_communication" : customer_communication,
+            "customer_email_address" : customer_email_address,
+            "customer_name" : customer_name,
+            "customer_purchase_ip" : customer_purchase_ip,
+            "customer_signature" : customer_signature,
+            "duplicate_charge_documentation" : duplicate_charge_documentation,
+            "duplicate_charge_explanation" : duplicate_charge_explanation,
+            "duplicate_charge_id" : duplicate_charge_id,
+            "product_description" : product_description,
+            "receipt" : receipt,
+            "refund_policy" : refund_policy,
+            "refund_policy_disclosure" : refund_policy_disclosure,
+            "refund_refusal_explanation" : refund_refusal_explanation,
+            "service_date" : service_date,
+            "service_documentation" : service_documentation,
+            "shipping_address" : shipping_address,
+            "shipping_carrier" : shipping_carrier,
+            "shipping_date" : shipping_date,
+            "shipping_documentation" : shipping_documentation,
+            "shipping_tracking_number" : shipping_tracking_number,
+            "uncategorized_file" : uncategorized_file,
+            "uncategorized_text" : uncategorized_text
+        ])
     }
 
 }
