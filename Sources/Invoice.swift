@@ -166,7 +166,7 @@ public final class Invoice: NodeConvertible {
         webhooks_delivered_at = try node.extract("webhooks_delivered_at")
     }
     
-    public func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "amount_due" : .number(.int(amount_due)),

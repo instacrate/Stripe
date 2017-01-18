@@ -31,7 +31,7 @@ public final class VerificationRequirement: NodeConvertible {
         additional = try node.extract("additional")
     }
     
-    public func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "minimum" : .array(minimum.map { Node.string($0) } ),
             "additional" : .array(minimum.map { Node.string($0) } )

@@ -61,7 +61,7 @@ public final class Owner: NodeConvertible {
         verified_phone = try node.extract("verified_phone")
     }
     
-    public func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "address" : address.makeNode(),
             "email" : .string(email),
@@ -93,7 +93,7 @@ public final class Reciever: NodeConvertible {
         refund_attributes_status = try node.extract("refund_attributes_status")
     }
     
-    public func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "address" : .string(address),
             "amount_charged" : .string(amount_charged),
@@ -179,7 +179,7 @@ public final class Source: NodeConvertible {
         usage = try node.extract("usage")
     }
     
-    public func makeNode(context: Context) throws -> Node {
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "id" : .string(id),
             "amount" : .number(.int(amount)),
