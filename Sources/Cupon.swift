@@ -63,10 +63,10 @@ public final class Cupon: NodeConvertible {
             "redeem_by" : .number(.double(redeem_by.timeIntervalSince1970)),
             "times_redeemed" : .number(.int(times_redeemed)),
             "valid" : .bool(valid)
-            ] as [String : Node]).add(objects: [
-                "amount_off" : amount_off,
-                "currency" : currency,
-                "duration_in_months" : duration_in_months
-            ])
+        ] as [String : Node]).add(objects: [
+            "amount_off" : amount_off,
+            "currency" : currency,
+            "duration_in_months" : duration_in_months
+        ])
     }
 }

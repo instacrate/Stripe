@@ -28,6 +28,17 @@ public enum WebhookResource: String {
     case account
     case charge
     case invoice
+    
+    var internalModelType: NodeConvertible.Type {
+        switch self {
+        case .account:
+            return Account.self
+        case .charge:
+            return Charge.self
+        case .invoice:
+            return Invoice.self
+        }
+    }
 }
 
 private func parseEvent(fromRequest request: Request) throws -> (WebhookResource, WebhookAction) {

@@ -230,6 +230,8 @@ public final class TransferSchedule: NodeConvertible {
 }
 
 public final class Account: NodeConvertible {
+    
+    static let type = "account"
 
     public let id: String
     public let business_logo: String?
@@ -259,6 +261,11 @@ public final class Account: NodeConvertible {
     public let keys: String
 
     public required init(node: Node, in context: Context) throws {
+        
+        guard try node.extract("object") == Account.type else {
+            throw NodeError.unableToConvert(node: node, expected: Account.type)
+        }
+        
         id = try node.extract("id")
         business_logo = try? node.extract("business_logo")
         business_name = try? node.extract("business_name")

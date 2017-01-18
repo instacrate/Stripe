@@ -80,12 +80,14 @@ public final class Subscription: NodeConvertible {
             "quantity" : .number(.int(quantity)),
             "start" : .number(.double(start.timeIntervalSince1970)),
             "status" : .string(status.rawValue),
-        ] as [String : Node]).add(objects: ["canceled_at" : canceled_at,
-                                            "ended_at" : ended_at,
-                                            "tax_percent" : tax_percent,
-                                            "trial_end" : trial_end,
-                                            "trial_start" : trial_start,
-                                            "application_fee_percent" : application_fee_percent,
-                                            "discount" : discount])
+        ] as [String : Node]).add(objects: [
+            "canceled_at" : canceled_at,
+            "ended_at" : ended_at,
+            "tax_percent" : tax_percent,
+            "trial_end" : trial_end,
+            "trial_start" : trial_start,
+            "application_fee_percent" : application_fee_percent,
+            "discount" : discount
+        ])
     }
 }
