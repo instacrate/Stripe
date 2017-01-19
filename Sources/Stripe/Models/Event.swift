@@ -79,7 +79,7 @@ public final class EventData: NodeConvertible {
     }
 }
 
-final class Event: NodeConvertible {
+public final class Event: NodeConvertible {
     
     public let id: String
     public let api_version: String
@@ -125,7 +125,7 @@ final class Event: NodeConvertible {
             "data" : try data.makeNode(),
             "livemode" : .bool(livemode),
             "pending_webhooks" : .number(.int(pending_webhooks)),
-            "type" : .string("\(type.0).\(type.1)")
+            "type" : .string("\(resource).\(action)")
         ] as [String : Node]).add(objects: [
             "request" : request
         ])

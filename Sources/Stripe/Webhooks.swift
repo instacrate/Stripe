@@ -19,9 +19,9 @@ public final class StripeWebhookManager: RouteCollection {
 
     public typealias Wrapped = HTTP.Responder
 
-    fileprivate var webhookHandlers: [EventResource : [EventAction : (EventResource, EventAction, Request) throws -> (Response)]] = [:]
+    fileprivate var webhookHandlers: [EventResource : [EventAction : (Event) throws -> (Response)]] = [:]
 
-    public func registerHandler(forResource resource: EventResource, action: EventAction, handler: @escaping (EventResource, EventAction, Request) throws -> Response) {
+    public func registerHandler(forResource resource: EventResource, action: EventAction, handler: @escaping (Event) throws -> Response) {
 
         var resourceHanderGroup = webhookHandlers[resource] ?? [:]
         resourceHanderGroup[action] = handler
@@ -43,7 +43,7 @@ public final class StripeWebhookManager: RouteCollection {
                     return Response(status: .notImplemented)
                 }
 
-                return try handler(event.resource, event.action, request)
+                return try handler(event)
             }
         }
     }
