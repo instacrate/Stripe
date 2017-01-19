@@ -11,24 +11,7 @@ import HTTP
 import Routing
 import Vapor
 
-private func parseEvent(fromRequest request: Request) throws -> (EventResource, EventAction) {
-    let json = try request.json()
 
-    guard let eventType = json["type"]?.string else {
-        throw Abort.custom(status: .badRequest, message: "Event type not found.")
-    }
-
-    let components = eventType.components(separatedBy: ".")
-
-    let _resource = components[0..<components.count - 1].joined(separator: ".").lowercased()
-    let _action = components[components.count - 1].lowercased()
-
-    guard let resource = EventResource(rawValue: _resource), let action = EventAction(rawValue: _action) else {
-        throw Abort.custom(status: .internalServerError, message: "Unsupported event type.")
-    }
-
-    return (resource, action)
-}
 
 public final class StripeWebhookManager: RouteCollection {
 

@@ -8,13 +8,26 @@
 
 import Foundation
 import Node
+import Vapor
+
+fileprivate func parseEvent(from string: String) throws -> (EventResource, EventAction) {
+    let components = string.components(separatedBy: ".")
+    
+    let _resource = components[0..<components.count - 1].joined(separator: ".").lowercased()
+    let _action = components[components.count - 1].lowercased()
+    
+    guard let resource = EventResource(rawValue: _resource), let action = EventAction(rawValue: _action) else {
+        throw Abort.custom(status: .internalServerError, message: "Unsupported event type.")
+    }
+    
+    return (resource, action)
+}
 
 public enum EventAction: String {
     
     case updated
     case deleted
     case created
-    
     case pending
     case failed
     case refunded
@@ -39,26 +52,61 @@ public enum EventResource: String {
     }
 }
 
+public final class EventData: NodeConvertible {
+    
+    public let object: NodeConvertible
+    public let previous_attributes: Node
+    
+    public init(node: Node, in context: Context) throws {
+        
+        guard let dictionaryContext = context as? [String : EventResource], let resource = dictionaryContext["resource"] else {
+            throw Abort.custom(status: .internalServerError, message: "Missing resource in context.")
+        }
+        
+        guard let objectNode = node["object"] else {
+            throw Abort.custom(status: .internalServerError, message: "Missing object node in event.")
+        }
+        
+        object = try resource.internalModelType.init(node: objectNode)
+        previous_attributes = try node.extract("previous_attributes")
+    }
+    
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "object" : try object.makeNode(),
+            "previous_attributes" : previous_attributes
+        ])
+    }
+}
+
 final class Event: NodeConvertible {
     
     public let id: String
     public let api_version: String
     public let created: Date
-    public let data: Node
+    public let data: EventData
     public let livemode: Bool
     public let pending_webhooks: Int
     public let request: String?
-    public let type: String
+    public let type: (EventResource, EventAction)
 
     public init(node: Node, in context: Context = EmptyNode) throws {
         id = try node.extract("id")
         api_version = try node.extract("api_version")
         created = try node.extract("created")
-        data = try node.extract("data")
         livemode = try node.extract("livemode")
         pending_webhooks = try node.extract("pending_webhooks")
         request = try node.extract("request")
-        type = try node.extract("type")
+        
+        type = try node.extract("type") { (typeString: String) -> (EventResource, EventAction) in
+            return try parseEvent(from: typeString)
+        }
+        
+        guard let dataNode = node["data"] else {
+            throw Abort.custom(status: .badRequest, message: "Missing data field on event.")
+        }
+        
+        data = try EventData(node: dataNode, in: ["resource" : type.0])
     }
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
@@ -66,10 +114,10 @@ final class Event: NodeConvertible {
             "id" : .string(id),
             "api_version" : .string(api_version),
             "created" : try created.makeNode(),
-            "data" : data,
+            "data" : try data.makeNode(),
             "livemode" : .bool(livemode),
             "pending_webhooks" : .number(.int(pending_webhooks)),
-            "type" : .string(type)
+            "type" : .string("\(type.0).\(type.1)")
         ] as [String : Node]).add(objects: [
             "request" : request
         ])
