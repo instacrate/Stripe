@@ -89,6 +89,14 @@ final class Event: NodeConvertible {
     public let pending_webhooks: Int
     public let request: String?
     public let type: (EventResource, EventAction)
+    
+    public var resource: EventResource {
+        return type.0
+    }
+    
+    public var action: EventAction {
+        return type.1
+    }
 
     public init(node: Node, in context: Context = EmptyNode) throws {
         id = try node.extract("id")

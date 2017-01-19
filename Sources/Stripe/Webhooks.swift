@@ -33,13 +33,17 @@ public final class StripeWebhookManager: RouteCollection {
         builder.grouped("stripe").group("webhook") { webhook in
 
             webhook.post() { request in
-                let (resource, action) = try parseEvent(fromRequest: request)
+                guard let node = request.json?.node else {
+                    throw Abort.custom(status: .badRequest, message: "Could not parse JSON into node.")
+                }
+                
+                let event = try Event(node: node)
 
-                guard let handler = self.webhookHandlers[resource]?[action] else {
+                guard let handler = self.webhookHandlers[event.resource]?[event.action] else {
                     return Response(status: .notImplemented)
                 }
 
-                return try handler(resource, action, request)
+                return try handler(event.resource, event.action, request)
             }
         }
     }
