@@ -20,6 +20,7 @@ public final class Customer: NodeConvertible {
     public let currency: Currency?
     public let default_source: String
     public let delinquent: Bool
+    public let metadata: Node
     public let description: String?
     public let discount: Discount?
     public let email: String?
@@ -45,6 +46,7 @@ public final class Customer: NodeConvertible {
         livemode = try node.extract("livemode")
         sources = try node.extractList("sources")
         subscriptions = try node.extractList("subscriptions")
+        metadata = node["metadata"] ?? EmptyNode
     }
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
@@ -56,7 +58,8 @@ public final class Customer: NodeConvertible {
             "delinquent" : .bool(delinquent),
             "livemode" : .bool(livemode),
             "sources" :  .array(sources.map { try $0.makeNode() }),
-            "subscriptions" : .array(subscriptions.map { try $0.makeNode() })
+            "subscriptions" : .array(subscriptions.map { try $0.makeNode() }),
+            "metadata" : metadata
         ] as [String : Node]).add(objects: [
             "discount" : discount,
             "currency" : currency,

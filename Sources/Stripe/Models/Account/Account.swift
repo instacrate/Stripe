@@ -138,6 +138,7 @@ public final class Account: NodeConvertible {
     public let transfers_enabled: Bool
     public let verification: IdentityVerification
     public let keys: String
+    public let metadata: Node
 
     public required init(node: Node, in context: Context) throws {
         
@@ -171,6 +172,7 @@ public final class Account: NodeConvertible {
         transfers_enabled = try node.extract("transfers_enabled")
         verification = try node.extract("verification")
         keys = try node.extract("keys")
+        metadata = node["metadata"] ?? EmptyNode
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
@@ -192,7 +194,8 @@ public final class Account: NodeConvertible {
             "transfer_schedule" : try transfer_schedule.makeNode(),
             "transfers_enabled" : .bool(transfers_enabled),
             "verification" : try verification.makeNode(),
-            "keys" : .string(keys)
+            "keys" : .string(keys),
+            "metadata" : metadata
         ] as [String : Node]).add(objects: [
             "business_logo" : business_logo,
             "business_name" : business_name,
