@@ -100,6 +100,10 @@ public final class Stripe {
         return try base.post("invoices/\(invoice_id)", query: ["metadata[orders]" : "\(id)"])
     }
     
+    public func updateAccount(id: String, parameters: [String : String]) throws -> Account {
+        return try base.post("accounts/\(id)", query: parameters)
+    }
+    
     public func upload(file bytes: Bytes, with reason: UploadReason, type: FileType) throws -> FileUpload {
         let file = Multipart.File(name: "file", type: type.rawValue, data: bytes)
         return try uploads.upload("files", multipart: Multipart.file(file))
