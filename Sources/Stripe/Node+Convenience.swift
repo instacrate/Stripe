@@ -10,7 +10,7 @@ import Foundation
 import Node
 import Vapor
 
-internal extension Node {
+public extension Node {
     
     func add(name: String, node: Node?) throws -> Node {
         if let node = node {
@@ -39,7 +39,7 @@ internal extension Node {
     }
 }
 
-extension RawRepresentable where Self: NodeConvertible, RawValue == String {
+public extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         
@@ -59,7 +59,7 @@ extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     }
 }
 
-extension RawRepresentable where Self: NodeConvertible, RawValue == String {
+public extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     
     public init?(from string: String) throws {
         guard let value = Self.init(rawValue: string) else {
@@ -70,7 +70,7 @@ extension RawRepresentable where Self: NodeConvertible, RawValue == String {
     }
 }
 
-extension Date {
+public extension Date {
     
     public init(ISO8601String: String) throws {
         let dateFormatter = DateFormatter()
@@ -113,7 +113,7 @@ extension Date: NodeConvertible {
     }
 }
 
-extension Node {
+public extension Node {
     
     func extractList<T: NodeInitializable>(_ path: PathIndex...) throws -> [T] {
         guard let node = self[path] else {
