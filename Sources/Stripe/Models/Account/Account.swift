@@ -135,7 +135,7 @@ public final class Account: NodeConvertible {
     public let business_name: String?
     public let business_url: String?
     public let charges_enabled: Bool
-    public let country: CountryCode
+    public let country: CountryType
     public let debit_negative_balances: Bool
     public let decline_charge_on: DeclineChargeRules
     public let default_currency: Currency
@@ -155,7 +155,7 @@ public final class Account: NodeConvertible {
     public let transfer_statement_descriptor: String?
     public let transfers_enabled: Bool
     public let verification: IdentityVerification
-    public let keys: Keys
+    public let keys: Keys?
     public let metadata: Node
 
     public required init(node: Node, in context: Context) throws {
@@ -211,7 +211,6 @@ public final class Account: NodeConvertible {
             "transfer_schedule" : try transfer_schedule.makeNode(),
             "transfers_enabled" : .bool(transfers_enabled),
             "verification" : try verification.makeNode(),
-            "keys" : try keys.makeNode(),
             "metadata" : metadata
         ] as [String : Node]).add(objects: [
             "business_logo" : business_logo,
@@ -222,35 +221,39 @@ public final class Account: NodeConvertible {
             "support_email" : support_email,
             "support_phone" : support_phone,
             "transfer_statement_descriptor" : transfer_statement_descriptor,
-            "display_name" : display_name
+            "display_name" : display_name,
+            "keys" : keys
         ])
     }
     
-    public func descriptionsForNeededFields() -> [String: String] {
-        var descriptions: [String: String] = [:]
+    public func descriptionsForNeededFields() throws -> [String: Node] {
+        var descriptions: [String: Node] = [:]
         
-        verification.fields_needed.forEach {
-            description(for: $0).forEach { descriptions[$0] = $1 }
+        try verification.fields_needed.forEach {
+            try description(for: $0).forEach { descriptions[$0] = $1 }
+        }
+        
+        let legalEntity = descriptions.filter { $0.key.contains("legal_entity") }
+        
+        if legalEntity.count > 0 {
+            let groupedLegalEntity = legalEntity.map {
+                let shortenedKey = $0.substring(from: $0.range(of: "legal_entity.")!.upperBound)
+                return (shortenedKey, $1)
+            }
+            
+            descriptions["legal_entity"] = .object(groupedLegalEntity)
         }
         
         return descriptions
     }
     
-    private func description(for field: String) -> [String : String] {
+    private func description(for field: String) throws -> [String : Node] {
         switch field {
         case "external_account":
-            var descriptions: [String: String] = [:]
+            return try ["external_account" : Node(node: ExternalAccount.descriptionsForNeededFields(in: country))]
             
-            switch country {
-            case .us:
-                descriptions[field + ".routing_number"] =  "The ACH routing number."
-                fallthrough
-            default:
-                descriptions[field + ".account_number"] = "The account number for the bank account. Must be a checking account."
-                descriptions[field + ".country"] = "The country the bank account is in."
-                descriptions[field + ".currency"] = "The currency of the bank account."
-            }
-            
+        case let field where field.hasPrefix("legal_entity"):
+            return [field : .string(field)]
         case "legal_entity.business_name":
             return [field: "The publicly visible name of your business"]
         case "legal_entity.business_tax_id":
@@ -273,13 +276,9 @@ public final class Account: NodeConvertible {
             return [field: "Always company."]
         
         case "tos_acceptance.date": fallthrough
-        case "tos_acceptance.ip":
-            return [field: field]
-            
+        case "tos_acceptance.ip": fallthrough
         default:
-            return [field: field]
+            return [field: .string(field)]
         }
-        
-        return [field: field]
     }
 }

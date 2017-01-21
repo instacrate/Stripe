@@ -43,7 +43,7 @@ public final class Stripe {
     }
 
     public func createManagedAccount(email: String, source: String, local_id: Int?) throws -> Account {
-        let defaultQuery: [String: CustomStringConvertible] = ["managed" : true, "country" : "US", "email" : email]
+        let defaultQuery: [String: CustomStringConvertible] = ["managed" : true, "country" : "US", "email" : email, "legal_entity[type]" : "company"]
         let query = local_id.flatMap { merge(query: defaultQuery, with: ["id" : "\($0)"]) } ?? defaultQuery
         
         return try base.post("accounts", query: query)
@@ -97,7 +97,7 @@ public final class Stripe {
     }
 
     public func acceptedTermsOfService(for user: String, ip: String) throws -> Account {
-        return try base.post("accounts/\(user)", query: ["tos_acceptance[date]" : "\(Date().timeIntervalSince1970)", "tos_acceptance[ip]" : ip])
+        return try base.post("accounts/\(user)", query: ["tos_acceptance[date]" : "\(Int(Date().timeIntervalSince1970))", "tos_acceptance[ip]" : ip])
     }
 
     public func updateInvoiceMetadata(for id: Int, invoice_id: String) throws -> Invoice {

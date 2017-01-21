@@ -22,7 +22,7 @@ public enum IdentityVerificationFailureReason: String, NodeConvertible {
 
 public final class IdentityVerification: NodeConvertible {
     
-    public let disabled_reason: IdentityVerificationFailureReason
+    public let disabled_reason: IdentityVerificationFailureReason?
     public let due_by: Date?
     public let fields_needed: [String]
     
@@ -34,10 +34,10 @@ public final class IdentityVerification: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "disabled_reason" : disabled_reason.makeNode(),
-            "fields_needed" : .array(fields_needed.map { Node.string($0) } ),
+            "fields_needed" : .array(fields_needed.map { Node.string($0) } )
         ] as [String : Node]).add(objects: [
-            "due_by" : due_by
+            "due_by" : due_by,
+            "disabled_reason" : disabled_reason
         ])
     }
 }
