@@ -41,39 +41,39 @@ public final class DisputeEvidence: NodeConvertible {
 
     public init(node: Node, in context: Context = EmptyNode) throws {
 
-        access_activity_log = try? node.extract("access_activity_log")
-        billing_address = try? node.extract("billing_address")
-        cancellation_policy = try? node.extract("cancellation_policy")
-        cancellation_policy_disclosure = try? node.extract("cancellation_policy_disclosure")
-        cancellation_rebuttal = try? node.extract("cancellation_rebuttal")
-        customer_communication = try? node.extract("customer_communication")
-        customer_email_address = try? node.extract("customer_email_address")
-        customer_name = try? node.extract("customer_name")
-        customer_purchase_ip = try? node.extract("customer_purchase_ip")
-        customer_signature = try? node.extract("customer_signature")
-        duplicate_charge_documentation = try? node.extract("duplicate_charge_documentation")
-        duplicate_charge_explanation = try? node.extract("duplicate_charge_explanation")
-        duplicate_charge_id = try? node.extract("duplicate_charge_id")
-        product_description = try? node.extract("product_description")
-        receipt = try? node.extract("receipt")
-        refund_policy = try? node.extract("refund_policy")
-        refund_policy_disclosure = try? node.extract("refund_policy_disclosure")
-        refund_refusal_explanation = try? node.extract("refund_refusal_explanation")
-        service_date = try? node.extract("service_date")
-        service_documentation = try? node.extract("service_documentation")
-        shipping_address = try? node.extract("shipping_address")
-        shipping_carrier = try? node.extract("shipping_carrier")
-        shipping_date = try? node.extract("shipping_date")
-        shipping_documentation = try? node.extract("shipping_documentation")
-        shipping_tracking_number = try? node.extract("shipping_tracking_number")
-        uncategorized_file = try? node.extract("uncategorized_file")
-        uncategorized_text = try? node.extract("uncategorized_text")
+        access_activity_log = try node.extract("access_activity_log")
+        billing_address = try node.extract("billing_address")
+        cancellation_policy = try node.extract("cancellation_policy")
+        cancellation_policy_disclosure = try node.extract("cancellation_policy_disclosure")
+        cancellation_rebuttal = try node.extract("cancellation_rebuttal")
+        customer_communication = try node.extract("customer_communication")
+        customer_email_address = try node.extract("customer_email_address")
+        customer_name = try node.extract("customer_name")
+        customer_purchase_ip = try node.extract("customer_purchase_ip")
+        customer_signature = try node.extract("customer_signature")
+        duplicate_charge_documentation = try node.extract("duplicate_charge_documentation")
+        duplicate_charge_explanation = try node.extract("duplicate_charge_explanation")
+        duplicate_charge_id = try node.extract("duplicate_charge_id")
+        product_description = try node.extract("product_description")
+        receipt = try node.extract("receipt")
+        refund_policy = try node.extract("refund_policy")
+        refund_policy_disclosure = try node.extract("refund_policy_disclosure")
+        refund_refusal_explanation = try node.extract("refund_refusal_explanation")
+        service_date = try node.extract("service_date")
+        service_documentation = try node.extract("service_documentation")
+        shipping_address = try node.extract("shipping_address")
+        shipping_carrier = try node.extract("shipping_carrier")
+        shipping_date = try node.extract("shipping_date")
+        shipping_documentation = try node.extract("shipping_documentation")
+        shipping_tracking_number = try node.extract("shipping_tracking_number")
+        uncategorized_file = try node.extract("uncategorized_file")
+        uncategorized_text = try node.extract("uncategorized_text")
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         // TODO : Make init method that accepts optional values
         
-        return try Node(node: []).add(objects: [
+        return try Node(node: [:]).add(objects: [
             "access_activity_log" : access_activity_log,
             "billing_address" : billing_address,
             "cancellation_policy" : cancellation_policy,

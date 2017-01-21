@@ -33,9 +33,9 @@ public enum LegalEntityVerificationFailureReason: String, NodeConvertible {
 public final class LegalEntityIdentityVerification: NodeConvertible {
     
     public let status: LegalEntityVerificationStatus
-    public let document: Document
-    public let details: String
-    public let details_code: LegalEntityVerificationFailureReason
+    public let document: Document?
+    public let details: String?
+    public let details_code: LegalEntityVerificationFailureReason?
     
     public required init(node: Node, in context: Context = EmptyNode) throws {
         status = try node.extract("status")
@@ -47,10 +47,11 @@ public final class LegalEntityIdentityVerification: NodeConvertible {
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
             "status" : try status.makeNode(),
-            "document" : try document.makeNode(),
-            "details" : .string(details),
-            "details_code" : try details_code.makeNode()
-        ] as [String : Node])
+        ] as [String : Node]).add(objects: [
+            "details" : details,
+            "document" : document,
+            "details_code" : details_code
+        ])
     }
 }
 

@@ -88,11 +88,11 @@ public final class Card: NodeConvertible {
         address_zip_check = try node.extract("address_zip_check")
         brand = try node.extract("brand")
         country = try node.extract("country")
-        currency = try? node.extract("currency")
+        currency = try node.extract("currency")
         customer = try node.extract("customer")
         cvc_check = try node.extract("cvc_check")
-        default_for_currency = try? node.extract("default_for_currency")
-        dynamic_last4 = try? node.extract("dynamic_last4")
+        default_for_currency = try node.extract("default_for_currency")
+        dynamic_last4 = try node.extract("dynamic_last4")
         last4 = try node.extract("last4")
         exp_year = try node.extract("exp_year")
         exp_month = try node.extract("exp_month")
@@ -100,7 +100,7 @@ public final class Card: NodeConvertible {
         funding = try node.extract("funding")
         name = try node.extract("name")
         recipient = try node.extract("recipient")
-        tokenization_method = try? node.extract("tokenization_method")
+        tokenization_method = try node.extract("tokenization_method")
     }
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {

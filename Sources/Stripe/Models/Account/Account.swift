@@ -50,9 +50,9 @@ public final class Document: NodeConvertible {
 
 public final class DateOfBirth: NodeConvertible {
 
-    public let day: Int
-    public let month: Int
-    public let year: Int
+    public let day: Int?
+    public let month: Int?
+    public let year: Int?
 
     public required init(node: Node, in context: Context) throws {
         day = try node.extract("day")
@@ -61,11 +61,11 @@ public final class DateOfBirth: NodeConvertible {
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: [
-            "day" : .number(.int(day)),
-            "month" : .number(.int(month)),
-            "year" : .number(.int(year))
-        ] as [String : Node])
+        return try Node(node: [:]).add(objects: [
+            "day" : day,
+            "month" : month,
+            "year" : year
+        ])
     }
 }
 
@@ -82,7 +82,7 @@ public final class TermsOfServiceAgreement: NodeConvertible {
     }
 
     public func makeNode(context: Context = EmptyNode) throws -> Node {
-        return try Node(node: []).add(objects: [
+        return try Node(node: [:]).add(objects: [
             "date" : date,
             "ip" : ip,
             "user_agent" : user_agent
@@ -108,6 +108,24 @@ public final class TransferSchedule: NodeConvertible {
     }
 }
 
+public final class Keys: NodeConvertible {
+    
+    public let secret: String
+    public let publishable: String
+    
+    public required init(node: Node, in context: Context) throws {
+        secret = try node.extract("secret")
+        publishable = try node.extract("publishable")
+    }
+    
+    public func makeNode(context: Context = EmptyNode) throws -> Node {
+        return try Node(node: [
+            "secret" : .string(secret),
+            "publishable" : .string(publishable)
+        ] as [String : Node])
+    }
+}
+
 public final class Account: NodeConvertible {
     
     static let type = "account"
@@ -122,9 +140,9 @@ public final class Account: NodeConvertible {
     public let decline_charge_on: DeclineChargeRules
     public let default_currency: Currency
     public let details_submitted: Bool
-    public let display_name: String
+    public let display_name: String?
     public let email: String
-    public let external_accounts: ExternalAccount
+    public let external_accounts: [ExternalAccount]
     public let legal_entity: LegalEntity
     public let managed: Bool
     public let product_description: String?
@@ -137,7 +155,7 @@ public final class Account: NodeConvertible {
     public let transfer_statement_descriptor: String?
     public let transfers_enabled: Bool
     public let verification: IdentityVerification
-    public let keys: String
+    public let keys: Keys
     public let metadata: Node
 
     public required init(node: Node, in context: Context) throws {
@@ -147,9 +165,9 @@ public final class Account: NodeConvertible {
         }
         
         id = try node.extract("id")
-        business_logo = try? node.extract("business_logo")
-        business_name = try? node.extract("business_name")
-        business_url = try? node.extract("business_url")
+        business_logo = try node.extract("business_logo")
+        business_name = try node.extract("business_name")
+        business_url = try node.extract("business_url")
         charges_enabled = try node.extract("charges_enabled")
         country = try node.extract("country")
         debit_negative_balances = try node.extract("debit_negative_balances")
@@ -158,7 +176,7 @@ public final class Account: NodeConvertible {
         details_submitted = try node.extract("details_submitted")
         display_name = try node.extract("display_name")
         email = try node.extract("email")
-        external_accounts = try node.extract("external_accounts")
+        external_accounts = try node.extractList("external_accounts")
         legal_entity = try node.extract("legal_entity")
         managed = try node.extract("managed")
         product_description = try node.extract("product_description")
@@ -184,9 +202,8 @@ public final class Account: NodeConvertible {
             "decline_charge_on" : try decline_charge_on.makeNode(),
             "default_currency" : try default_currency.makeNode(),
             "details_submitted" : .bool(details_submitted),
-            "display_name" : .string(display_name),
             "email" : .string(email),
-            "external_accounts" : try external_accounts.makeNode(),
+            "external_accounts" : try .array(external_accounts.map { try $0.makeNode() }),
             "legal_entity" : try legal_entity.makeNode(),
             "managed" : .bool(managed),
             "timezone" : .string(timezone),
@@ -194,7 +211,7 @@ public final class Account: NodeConvertible {
             "transfer_schedule" : try transfer_schedule.makeNode(),
             "transfers_enabled" : .bool(transfers_enabled),
             "verification" : try verification.makeNode(),
-            "keys" : .string(keys),
+            "keys" : try keys.makeNode(),
             "metadata" : metadata
         ] as [String : Node]).add(objects: [
             "business_logo" : business_logo,
@@ -204,7 +221,8 @@ public final class Account: NodeConvertible {
             "statement_descriptor" : statement_descriptor,
             "support_email" : support_email,
             "support_phone" : support_phone,
-            "transfer_statement_descriptor" : transfer_statement_descriptor
+            "transfer_statement_descriptor" : transfer_statement_descriptor,
+            "display_name" : display_name
         ])
     }
     
@@ -253,10 +271,15 @@ public final class Account: NodeConvertible {
             return [field: "The last four digits of the compnay representative's SSN."]
         case "legal_entity.type":
             return [field: "Always company."]
-            
+        
         case "tos_acceptance.date": fallthrough
         case "tos_acceptance.ip":
             return [field: field]
+            
+        default:
+            return [field: field]
         }
+        
+        return [field: field]
     }
 }

@@ -11,12 +11,12 @@ import Node
 
 public final class Address: NodeConvertible {
     
-    public let city: String
-    public let country: String
-    public let line1: String
-    public let line2: String
-    public let postal_code: String
-    public let state: String
+    public let city: String?
+    public let country: CountryType
+    public let line1: String?
+    public let line2: String?
+    public let postal_code: String?
+    public let state: String?
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         city = try node.extract("city")
@@ -29,12 +29,13 @@ public final class Address: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "city" : .string(city),
-            "country" : .string(country),
-            "line1" : .string(line1),
-            "line2" : .string(line2),
-            "postal_code" : .string(postal_code),
-            "state" : .string(state)
-        ] as [String : Node])
+            "country" : try country.makeNode(),
+        ] as [String : Node]).add(objects: [
+            "city" : city,
+            "line1" : line1,
+            "line2" : line2,
+            "postal_code" : postal_code,
+            "state" : state
+        ])
     }
 }

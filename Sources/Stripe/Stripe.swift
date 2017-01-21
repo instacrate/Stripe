@@ -76,8 +76,12 @@ public final class Stripe {
         return try base.get("customers/\(customer)/sources", query: ["object" : "card"])
     }
 
-    public func information(for customer: String) throws -> Customer {
+    public func customerInformation(for customer: String) throws -> Customer {
         return try base.get("customers/\(customer)")
+    }
+    
+    public func vendorInformation(for vendor: String) throws -> Account {
+        return try base.get("accounts/\(vendor)")
     }
 
     public func delete(payment: String, from customer: String) throws -> JSON {

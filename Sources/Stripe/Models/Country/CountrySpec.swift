@@ -8,6 +8,7 @@
 
 import Foundation
 import Node
+import Vapor
 
 public enum CountryType: String, NodeConvertible {
     
@@ -34,6 +35,18 @@ public enum CountryType: String, NodeConvertible {
     case se
     case sg
     case us
+    
+    public init(node: Node, in context: Context = EmptyNode) throws {
+        guard let value = node.string else {
+            throw Abort.custom(status: .internalServerError, message: "Expected \(String.self) for country code")
+        }
+        
+        guard let _self = CountryType(rawValue: value.lowercased()) else {
+            throw Abort.custom(status: .internalServerError, message: "Currency code \(value.lowercased()) doesn't match any known country codes.")
+        }
+        
+        self = _self
+    }
 }
 
 public final class Country: NodeConvertible {
