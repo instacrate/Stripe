@@ -42,7 +42,7 @@ public final class Owner: NodeConvertible {
             "verified_email" : .string(verified_email),
             "verified_name" : .string(verified_name),
             "verified_phone" : .string(verified_phone)
-            ] as [String : Node])
+        ] as [String : Node])
     }
 }
 
@@ -70,8 +70,10 @@ public final class Reciever: NodeConvertible {
             "amount_charged" : .string(amount_charged),
             "amount_received" : .string(amount_received),
             "amount_returned" : .string(amount_returned)
-            ] as [String : Node]).add(objects: ["refund_attributes_method" : refund_attributes_method,
-                                                "refund_attributes_status" : refund_attributes_status])
+        ] as [String : Node]).add(objects: [
+            "refund_attributes_method" : refund_attributes_method,
+            "refund_attributes_status" : refund_attributes_status
+        ])
     }
 }
 
@@ -109,6 +111,6 @@ public final class VerificationInformation: NodeConvertible {
         return try Node(node: [
             "attempts_remaining" : .number(.int(attempts_remaining)),
             "status" : .string(status.rawValue)
-            ] as [String : Node])
+        ] as [String : Node])
     }
 }

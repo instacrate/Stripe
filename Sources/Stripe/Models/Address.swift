@@ -35,6 +35,6 @@ public final class Address: NodeConvertible {
             "line2" : .string(line2),
             "postal_code" : .string(postal_code),
             "state" : .string(state)
-            ] as [String : Node])
+        ] as [String : Node])
     }
 }

@@ -124,7 +124,7 @@ public final class Account: NodeConvertible {
     public let details_submitted: Bool
     public let display_name: String
     public let email: String
-    public let external_accounts: Node
+    public let external_accounts: ExternalAccount
     public let legal_entity: LegalEntity
     public let managed: Bool
     public let product_description: String?
@@ -186,7 +186,7 @@ public final class Account: NodeConvertible {
             "details_submitted" : .bool(details_submitted),
             "display_name" : .string(display_name),
             "email" : .string(email),
-            "external_accounts" : external_accounts,
+            "external_accounts" : try external_accounts.makeNode(),
             "legal_entity" : try legal_entity.makeNode(),
             "managed" : .bool(managed),
             "timezone" : .string(timezone),
@@ -206,5 +206,57 @@ public final class Account: NodeConvertible {
             "support_phone" : support_phone,
             "transfer_statement_descriptor" : transfer_statement_descriptor
         ])
+    }
+    
+    public func descriptionsForNeededFields() -> [String: String] {
+        var descriptions: [String: String] = [:]
+        
+        verification.fields_needed.forEach {
+            description(for: $0).forEach { descriptions[$0] = $1 }
+        }
+        
+        return descriptions
+    }
+    
+    private func description(for field: String) -> [String : String] {
+        switch field {
+        case "external_account":
+            var descriptions: [String: String] = [:]
+            
+            switch country {
+            case .us:
+                descriptions[field + ".routing_number"] =  "The ACH routing number."
+                fallthrough
+            default:
+                descriptions[field + ".account_number"] = "The account number for the bank account. Must be a checking account."
+                descriptions[field + ".country"] = "The country the bank account is in."
+                descriptions[field + ".currency"] = "The currency of the bank account."
+            }
+            
+        case "legal_entity.business_name":
+            return [field: "The publicly visible name of your business"]
+        case "legal_entity.business_tax_id":
+            return [field: "The tax ID number of your business."]
+            
+        case let field where field.hasPrefix("legal_entity.address"):
+            return ["legal_entity.address": "The primary address of the legal entity."]
+        
+        case let field where field.hasPrefix("legal_entity.dob"):
+            return ["legal_entity.dob": "The date of birth for your company representative."]
+            
+        case "legal_entity.first_name":
+            return [field: "The first name of your company representative."]
+        case "legal_entity.last_name":
+            return [field: "The last name of your company representative."]
+            
+        case "legal_entity.ssn_last_4":
+            return [field: "The last four digits of the compnay representative's SSN."]
+        case "legal_entity.type":
+            return [field: "Always company."]
+            
+        case "tos_acceptance.date": fallthrough
+        case "tos_acceptance.ip":
+            return [field: field]
+        }
     }
 }

@@ -9,12 +9,39 @@
 import Foundation
 import Node
 
+public enum CountryType: String, NodeConvertible {
+    
+    case at
+    case au
+    case be
+    case ca
+    case ch
+    case de
+    case dk
+    case es
+    case fi
+    case fr
+    case gb
+    case hk
+    case ie
+    case it
+    case jp
+    case lu
+    case nl
+    case no
+    case nz
+    case pt
+    case se
+    case sg
+    case us
+}
+
 public final class Country: NodeConvertible {
     
     static let type = "country_spec"
     
-    public let id: String
-    public let default_currency: String
+    public let id: CountryType
+    public let default_currency: Currency
     public let supported_bank_account_currencies: Node
     public let supported_payment_currencies: [Currency]
     public let supported_payment_methods: [String]
@@ -36,12 +63,12 @@ public final class Country: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "id" : .string(id),
-            "default_currency" : .string(default_currency),
+            "id" : try id.makeNode(),
+            "default_currency" : try default_currency.makeNode(),
             "supported_bank_account_currencies" : supported_bank_account_currencies,
             "supported_payment_currencies" : .array(supported_payment_currencies.map { Node.string($0.rawValue) } ),
             "supported_payment_methods" : .array(supported_payment_methods.map { Node.string($0) } ),
             "verification_fields" : verification_fields.makeNode()
-            ] as [String : Node])
+        ] as [String : Node])
     }
 }
