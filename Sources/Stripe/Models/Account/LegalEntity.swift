@@ -105,4 +105,32 @@ public final class LegalEntity: NodeConvertible {
             "type" : type
         ])
     }
+    
+    static func descriptionForNeededFields(in country: CountryType, for field: String) -> String {
+        switch field {
+        case "legal_entity.business_name":
+            return "The publicly visible name of your business"
+        case "legal_entity.business_tax_id":
+            return "The tax ID number of your business."
+            
+        case let field where field.hasPrefix("legal_entity.address"):
+            return "The primary address of the legal entity."
+            
+        case let field where field.hasPrefix("legal_entity.dob"):
+            return "The date of birth for your company representative."
+            
+        case "legal_entity.first_name":
+            return "The first name of your company representative."
+        case "legal_entity.last_name":
+            return "The last name of your company representative."
+            
+        case "legal_entity.ssn_last_4":
+            return "The last four digits of the compnay representative's SSN."
+        case "legal_entity.type":
+            return "Always company."
+
+        default:
+            return field
+        }
+    }
 }

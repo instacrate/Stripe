@@ -8,6 +8,7 @@
 
 import Foundation
 import Node
+import Vapor
 
 public final class DeclineChargeRules: NodeConvertible {
     
@@ -126,6 +127,43 @@ public final class Keys: NodeConvertible {
     }
 }
 
+extension Sequence where Iterator.Element == (key: String, value: Node) {
+    
+    func grouped(by commonKey: String) throws -> [String : Node] {
+        let grouped = try map { (key, value) -> (String, Node) in
+            guard let range = key.range(of: "\(commonKey).") else {
+                throw Abort.custom(status: .internalServerError, message: "\(commonKey). did not exist in key.")
+            }
+            
+            return (key.substring(from: range.upperBound), value)
+        }
+        
+        var groupedDictionary: [String : Node] = [:]
+        grouped.forEach { groupedDictionary[$0] = $1 }
+        return groupedDictionary
+    }
+    
+    func nestObjects(by keys: [String]) throws -> [String : Node] {
+        guard var dictionarySelf = self as? [String: Node] else {
+            throw Abort.custom(status: .internalServerError, message: "Unable to cast in nestObjects.")
+        }
+        
+        for key in keys {
+            let filtered = filter { $0.key.contains(key) }
+            
+            filtered.forEach { dictionarySelf[$0.key] = nil }
+            
+            guard let final = try? filtered.grouped(by: key) else {
+                throw Abort.custom(status: .internalServerError, message: "Unable to group by \(key).")
+            }
+            
+            dictionarySelf[key] = .object(final)
+        }
+        
+        return dictionarySelf
+    }
+}
+
 public final class Account: NodeConvertible {
     
     static let type = "account"
@@ -233,18 +271,13 @@ public final class Account: NodeConvertible {
             try description(for: $0).forEach { descriptions[$0] = $1 }
         }
         
-        let legalEntity = descriptions.filter { $0.key.contains("legal_entity") }
+        descriptions = try descriptions.nestObjects(by: ["legal_entity"])
         
-        if legalEntity.count > 0 {
-            let groupedLegalEntity = legalEntity.map { (key, value) -> (String, Node) in
-                let shortenedKey = key.substring(from: key.range(of: "legal_entity.")!.upperBound)
-                return (shortenedKey, value)
-            }
-            
-            var groupedLegalEntityDictionary: [String : Node] = [:]
-            groupedLegalEntity.forEach { groupedLegalEntityDictionary[$0] = $1 }
-            descriptions["legal_entity"] = .object(groupedLegalEntityDictionary)
+        guard let legalEntityNode = descriptions["legal_entity"], case let .object(legalEntity) = legalEntityNode else {
+            return descriptions
         }
+        
+        descriptions["legal_entity"] = try .object(legalEntity.nestObjects(by: ["dob"]))
         
         return descriptions
     }
@@ -255,28 +288,8 @@ public final class Account: NodeConvertible {
             return try ["external_account" : Node(node: ExternalAccount.descriptionsForNeededFields(in: country))]
             
         case let field where field.hasPrefix("legal_entity"):
-            return [field : .string(field)]
-        case "legal_entity.business_name":
-            return [field: "The publicly visible name of your business"]
-        case "legal_entity.business_tax_id":
-            return [field: "The tax ID number of your business."]
+            return [field : .string(LegalEntity.descriptionForNeededFields(in: country, for: field))]
             
-        case let field where field.hasPrefix("legal_entity.address"):
-            return ["legal_entity.address": "The primary address of the legal entity."]
-        
-        case let field where field.hasPrefix("legal_entity.dob"):
-            return ["legal_entity.dob": "The date of birth for your company representative."]
-            
-        case "legal_entity.first_name":
-            return [field: "The first name of your company representative."]
-        case "legal_entity.last_name":
-            return [field: "The last name of your company representative."]
-            
-        case "legal_entity.ssn_last_4":
-            return [field: "The last four digits of the compnay representative's SSN."]
-        case "legal_entity.type":
-            return [field: "Always company."]
-        
         case "tos_acceptance.date": fallthrough
         case "tos_acceptance.ip": fallthrough
         default:
