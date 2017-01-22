@@ -236,12 +236,14 @@ public final class Account: NodeConvertible {
         let legalEntity = descriptions.filter { $0.key.contains("legal_entity") }
         
         if legalEntity.count > 0 {
-            let groupedLegalEntity = legalEntity.map {
-                let shortenedKey = $0.substring(from: $0.range(of: "legal_entity.")!.upperBound)
-                return (shortenedKey, $1)
+            let groupedLegalEntity = legalEntity.map { (key, value) -> (String, Node) in
+                let shortenedKey = key.substring(from: key.range(of: "legal_entity.")!.upperBound)
+                return (shortenedKey, value)
             }
             
-            descriptions["legal_entity"] = .object(groupedLegalEntity)
+            var groupedLegalEntityDictionary: [String : Node] = [:]
+            groupedLegalEntity.forEach { groupedLegalEntityDictionary[$0] = $1 }
+            descriptions["legal_entity"] = .object(groupedLegalEntityDictionary)
         }
         
         return descriptions
