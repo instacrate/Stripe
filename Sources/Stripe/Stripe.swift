@@ -25,8 +25,7 @@ public final class Stripe {
 
     public static let shared = Stripe()
 
-    static var encodedSecretKey = "sk_test_6zSrUMIQfOCUorVvFMS2LEzn".data(using: .utf8)!.base64EncodedString()
-    static let authorizationHeader: [HeaderKey : String] = ["Authorization" : "Basic \(Stripe.encodedSecretKey)"]
+    static var token = "sk_test_6zSrUMIQfOCUorVvFMS2LEzn"
     
     fileprivate let base = HTTPClient(urlString: "https://api.stripe.com/v1/")
     fileprivate let uploads = HTTPClient(urlString: "https://uploads.stripe.com/v1/")
@@ -58,8 +57,8 @@ public final class Stripe {
         return try base.post("plans", query: parameters)
     }
 
-    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, metadata: [String : CustomStringConvertible]) throws -> Subscription {
-        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId], with: metadata))
+    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
+        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId], with: metadata), token: publishableKey)
 
         if oneTime {
             let json = try base.delete("/subscriptions/\(subscription.id)", query: ["at_period_end" : true])
