@@ -12,6 +12,11 @@ import HTTP
 import Transport
 import Vapor
 
+func createToken(token: String) -> [HeaderKey: String] {
+    let data = token.data(using: .utf8)!.base64EncodedString()
+    return ["Authorization" : "Basic \(data)"]
+}
+
 public class HTTPClient {
     
     let baseURLString: String
@@ -23,8 +28,8 @@ public class HTTPClient {
         client = Client<TCPClientStream, Serializer<Request>, Parser<Response>>.self
     }
     
-    func get<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> T {
-        let response = try client.get(baseURLString + resource, headers: Stripe.authorizationHeader, query: query)
+    func get<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:], token: String = Stripe.token) throws -> T {
+        let response = try client.get(baseURLString + resource, headers: createToken(token: token), query: query)
         
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
@@ -35,8 +40,8 @@ public class HTTPClient {
         return try T.init(node: json.makeNode())
     }
     
-    func get<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> [T] {
-        let response = try client.get(baseURLString + resource, headers: Stripe.authorizationHeader, query: query)
+    func get<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:], token: String = Stripe.token) throws -> [T] {
+        let response = try client.get(baseURLString + resource, headers: createToken(token: token), query: query)
         
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
@@ -53,8 +58,8 @@ public class HTTPClient {
         }
     }
     
-    func post<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> T {
-        let response = try client.post(baseURLString + resource, headers: Stripe.authorizationHeader, query: query)
+    func post<T: NodeConvertible>(_ resource: String, query: [String : CustomStringConvertible] = [:], token: String = Stripe.token) throws -> T {
+        let response = try client.post(baseURLString + resource, headers: createToken(token: token), query: query)
         
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
@@ -80,8 +85,8 @@ public class HTTPClient {
         return try T.init(node: json.makeNode())
     }
     
-    func delete(_ resource: String, query: [String : CustomStringConvertible] = [:]) throws -> JSON {
-        let response = try client.delete(baseURLString + resource, headers: Stripe.authorizationHeader, query: query)
+    func delete(_ resource: String, query: [String : CustomStringConvertible] = [:], token: String = Stripe.token) throws -> JSON {
+        let response = try client.delete(baseURLString + resource, headers: createToken(token: token), query: query)
         
         guard let json = try? response.json() else {
             throw Abort.custom(status: .internalServerError, message: response.description)
