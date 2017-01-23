@@ -33,12 +33,16 @@ public final class Stripe {
     public func createToken() throws -> Token {
         return try base.post("tokens", query: ["card[number]" : 4242424242424242, "card[exp_month]" : 12, "card[exp_year]" : 2017, "card[cvc]" : 123])
     }
+    
+    public func createToken(for customer: String, representing card: String, on account: String) throws -> Token {
+        return try base.post("tokens", query: ["customer" : customer, "card" : card], token: account)
+    }
 
-    public func createNormalAccount(email: String, source: String, local_id: Int?) throws -> Customer {
+    public func createNormalAccount(email: String, source: String, local_id: Int?, on account: String) throws -> Customer {
         let defaultQuery = ["source" : source]
         let query = local_id.flatMap { merge(query: defaultQuery, with: ["id" : "\($0)"]) } ?? defaultQuery
 
-        return try base.post("customers", query: query)
+        return try base.post("customers", query: query, token: account)
     }
 
     public func createManagedAccount(email: String, source: String, local_id: Int?) throws -> Account {
@@ -48,8 +52,8 @@ public final class Stripe {
         return try base.post("accounts", query: query)
     }
 
-    public func associate(source: String, withStripe id: String) throws -> Card {
-        return try base.post("customers/\(id)/sources", query: ["source" : source])
+    public func associate(source: String, withStripe id: String, under secretKey: String = Stripe.token) throws -> Card {
+        return try base.post("customers/\(id)/sources", query: ["source" : source], token: secretKey)
     }
 
     public func createPlan(with price: Double, name: String, interval: Interval) throws -> Plan {
