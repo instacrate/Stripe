@@ -56,9 +56,9 @@ public final class Stripe {
         return try base.post("customers/\(id)/sources", query: ["source" : source], token: secretKey)
     }
 
-    public func createPlan(with price: Double, name: String, interval: Interval) throws -> Plan {
+    public func createPlan(with price: Double, name: String, interval: Interval, on account: String = Stripe.token) throws -> Plan {
         let parameters = ["id" : "\(UUID().uuidString)", "amount" : "\(Int(price * 100))", "currency" : "usd", "interval" : interval.rawValue, "name" : name]
-        return try base.post("plans", query: parameters)
+        return try base.post("plans", query: parameters, token: account)
     }
 
     public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
