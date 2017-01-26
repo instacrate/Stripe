@@ -241,8 +241,9 @@ public final class Account: NodeConvertible {
     }
     
     public func descriptionsForNeededFields() throws -> Node {
-        var descriptions: [String: Node] = [:]
-        var fieldsNeeded = verification.fields_needed
+        var descriptions: [Node] = []
+        
+        var fieldsNeeded = verification.fields_needed.filter { !$0.hasPrefix("tos_acceptance") }
         
         if fieldsNeeded.contains(where: { $0.contains("dob") }) {
             let keysToRemove = ["legal_entity.dob.day", "legal_entity.dob.month", "legal_entity.dob.year"]
@@ -251,24 +252,24 @@ public final class Account: NodeConvertible {
         }
         
         try fieldsNeeded.forEach {
-            try description(for: $0).forEach { descriptions[$0] = $1 }
+            descriptions.append(contentsOf: try description(for: $0))
         }
         
-        return try descriptions.group()
+        return .array(descriptions)
     }
     
-    private func description(for field: String) throws -> [String : Node] {
+    private func description(for field: String) throws -> [Node] {
         switch field {
         case "external_account":
-            return try ["external_account" : Node(node: ExternalAccount.descriptionsForNeededFields(in: country))]
+            return ExternalAccount.descriptionsForNeededFields(in: country)
             
         case let field where field.hasPrefix("legal_entity"):
-            return [field : .object(LegalEntity.descriptionForNeededFields(in: country, for: field))]
+            return [.object(LegalEntity.descriptionForNeededFields(in: country, for: field))]
             
         case "tos_acceptance.date": fallthrough
         case "tos_acceptance.ip": fallthrough
         default:
-            return [field: .string(field)]
+            return [.string(field)]
         }
     }
 }

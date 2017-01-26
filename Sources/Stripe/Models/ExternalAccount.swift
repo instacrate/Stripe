@@ -75,17 +75,17 @@ public final class ExternalAccount: NodeConvertible {
         ])
     }
     
-    static func descriptionsForNeededFields(in country: CountryType) -> [String : Node] {
-        var descriptions: [String: Node] = [:]
+    static func descriptionsForNeededFields(in country: CountryType) -> [Node] {
+        var descriptions: [Node] = []
         
         switch country {
         case .us:
-            descriptions["routing_number"] =  .object(["name" : "Routing Number", "description" : "The ACH routing number."])
+            descriptions.append(["name" : "Routing Number", "description" : "The ACH routing number.", "key" : "external_account.routing_number"])
             fallthrough
         default:
-            descriptions["account_number"] = .object(["name" : "Account Number", "description" : "The account number for the bank account. Must be a checking account."])
-            descriptions["country"] = .object(["name" : "Country", "description" : "The country the bank account is in."])
-            descriptions["currency"] = .object(["name" : "Currency", "description" : "The currency of the bank account."])
+            descriptions.append(["name" : "Account Number", "description" : "The account number for the bank account. Must be a checking account.", "key" : "external_account.account_number"])
+            descriptions.append(["name" : "Country", "description" : "The country the bank account is in.", "key" : "external_account.country"])
+            descriptions.append(["name" : "Currency", "description" : "The currency of the bank account.", "key" : "external_account.currency"])
         }
         
         return descriptions

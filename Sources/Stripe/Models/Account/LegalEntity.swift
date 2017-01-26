@@ -109,39 +109,39 @@ public final class LegalEntity: NodeConvertible {
     static func descriptionForNeededFields(in country: CountryType, for field: String) -> [String : Node] {
         switch field {
         case "legal_entity.business_name":
-            return ["name" : "Business Name", "description" : "The publicly visible name of your business"]
+            return ["name" : "Business Name", "description" : "The publicly visible name of your business", "key" : "legal_entity.business_name"]
         case "legal_entity.business_tax_id":
-            return ["name" : "Business Tax ID", "description" : "The tax ID number of your business."]
+            return ["name" : "Business Tax ID", "description" : "The tax ID number of your business.", "key" : "legal_entity.business_tax_id"]
             
         case let field where field.hasPrefix("legal_entity.address"):
             switch field {
             case "legal_entity.address.city":
-                return ["name" : "City", "description" : "The city your business is registered in."]
+                return ["name" : "City", "description" : "The city your business is registered in.", "key" : "legal_entity.address.city"]
             case "legal_entity.address.line1":
-                return ["name" : "Address", "description" : "The address of your business."]
+                return ["name" : "Address", "description" : "The address of your business.", "key" : "legal_entity.address.line1"]
             case "legal_entity.address.postal_code":
-                return ["name" : "Postal Code", "description" : "The postal code your business is registered in."]
+                return ["name" : "Postal Code", "description" : "The postal code your business is registered in.", "key" : "legal_entity.address.postal_code"]
             case "legal_entity.address.state":
-                return ["name" : "State", "description" : "The state your business is registered in."]
+                return ["name" : "State", "description" : "The state your business is registered in.", "key" : "legal_entity.address.state"]
             default:
                 return ["name" : "", "description" : ""]
             }
             
         case let field where field.hasPrefix("legal_entity.dob"):
-            return ["name" : "Date of Birth", "description" : "The date of birth for your company representative."]
+            return ["name" : "Date of Birth", "description" : "The date of birth for your company representative.", "key" : "legal_entity.dob"]
             
         case "legal_entity.first_name":
-            return ["name" : "First Name", "description" : "The first name of your company representative."]
+            return ["name" : "First Name", "description" : "The first name of your company representative.", "key" : "legal_entity.first_name"]
         case "legal_entity.last_name":
-            return ["name" : "Last Name", "description": "The last name of your company representative."]
+            return ["name" : "Last Name", "description": "The last name of your company representative.", "key" : "legal_entity.last_name"]
             
         case "legal_entity.ssn_last_4":
-            return ["name" : "Last 4 of Social Security number", "description" : "The last four digits of the compnay representative's SSN."]
+            return ["name" : "Last 4 of Social Security number", "description" : "The last four digits of the compnay representative's SSN.", "key" : "legal_entity.ssn_last_4"]
         case "legal_entity.type":
-            return ["name" : "Always company.", "description" : "Always company"]
+            return ["name" : "Always company.", "description" : "Always company", "key" : "legal_entity.type"]
 
         default:
-            return ["name" : "", "description" : ""]
+            return ["name" : "", "description" : "", "key" : ""]
         }
     }
 }
