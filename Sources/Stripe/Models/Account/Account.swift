@@ -240,18 +240,22 @@ public final class Account: NodeConvertible {
         ])
     }
     
-    public func descriptionsForNeededFields() throws -> Node {
-        var descriptions: [Node] = []
-        
-        var fieldsNeeded = verification.fields_needed.filter { !$0.hasPrefix("tos_acceptance") }
+    public func filteredNeededFieldsWithCombinedDateOfBirth(filtering prefix: String = "tos_acceptance") -> [String] {
+        var fieldsNeeded = verification.fields_needed.filter { !$0.hasPrefix(prefix) }
         
         if fieldsNeeded.contains(where: { $0.contains("dob") }) {
             let keysToRemove = ["legal_entity.dob.day", "legal_entity.dob.month", "legal_entity.dob.year"]
             fieldsNeeded = fieldsNeeded.filter { !keysToRemove.contains($0) }
             fieldsNeeded.append("legal_entity.dob")
         }
+
+        return fieldsNeeded
+    }
+    
+    public func descriptionsForNeededFields() throws -> Node {
+        var descriptions: [Node] = []
         
-        try fieldsNeeded.forEach {
+        try filteredNeededFieldsWithCombinedDateOfBirth().forEach {
             descriptions.append(contentsOf: try description(for: $0))
         }
         
@@ -261,7 +265,7 @@ public final class Account: NodeConvertible {
     private func description(for field: String) throws -> [Node] {
         switch field {
         case "external_account":
-            return ExternalAccount.descriptionsForNeededFields(in: country)
+            return ExternalAccount.descriptionsForNeededFields(in: country, for: field)
             
         case let field where field.hasPrefix("legal_entity"):
             return [.object(LegalEntity.descriptionForNeededFields(in: country, for: field))]
