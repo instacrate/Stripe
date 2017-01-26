@@ -242,8 +242,15 @@ public final class Account: NodeConvertible {
     
     public func descriptionsForNeededFields() throws -> Node {
         var descriptions: [String: Node] = [:]
+        var fieldsNeeded = verification.fields_needed
         
-        try verification.fields_needed.forEach {
+        if fieldsNeeded.contains(where: { $0.contains("dob") }) {
+            let keysToRemove = ["legal_entity.dob.day", "legal_entity.dob.month", "legal_entity.dob.year"]
+            fieldsNeeded = fieldsNeeded.filter { !keysToRemove.contains($0) }
+            fieldsNeeded.append("legal_entity.dob")
+        }
+        
+        try fieldsNeeded.forEach {
             try description(for: $0).forEach { descriptions[$0] = $1 }
         }
         
@@ -256,7 +263,7 @@ public final class Account: NodeConvertible {
             return try ["external_account" : Node(node: ExternalAccount.descriptionsForNeededFields(in: country))]
             
         case let field where field.hasPrefix("legal_entity"):
-            return [field : .string(LegalEntity.descriptionForNeededFields(in: country, for: field))]
+            return [field : .object(LegalEntity.descriptionForNeededFields(in: country, for: field))]
             
         case "tos_acceptance.date": fallthrough
         case "tos_acceptance.ip": fallthrough

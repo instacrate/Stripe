@@ -106,31 +106,42 @@ public final class LegalEntity: NodeConvertible {
         ])
     }
     
-    static func descriptionForNeededFields(in country: CountryType, for field: String) -> String {
+    static func descriptionForNeededFields(in country: CountryType, for field: String) -> [String : Node] {
         switch field {
         case "legal_entity.business_name":
-            return "The publicly visible name of your business"
+            return ["name" : "Business Name", "description" : "The publicly visible name of your business"]
         case "legal_entity.business_tax_id":
-            return "The tax ID number of your business."
+            return ["name" : "Business Tax ID", "description" : "The tax ID number of your business."]
             
         case let field where field.hasPrefix("legal_entity.address"):
-            return "The primary address of the legal entity."
+            switch field {
+            case "legal_entity.address.city":
+                return ["name" : "City", "description" : "The city your business is registered in."]
+            case "legal_entity.address.line1":
+                return ["name" : "Address", "description" : "The address of your business."]
+            case "legal_entity.address.postal_code":
+                return ["name" : "Postal Code", "description" : "The postal code your business is registered in."]
+            case "legal_entity.address.state":
+                return ["name" : "State", "description" : "The state your business is registered in."]
+            default:
+                return ["name" : "", "description" : ""]
+            }
             
         case let field where field.hasPrefix("legal_entity.dob"):
-            return "The date of birth for your company representative."
+            return ["name" : "Date of Birth", "description" : "The date of birth for your company representative."]
             
         case "legal_entity.first_name":
-            return "The first name of your company representative."
+            return ["name" : "First Name", "description" : "The first name of your company representative."]
         case "legal_entity.last_name":
-            return "The last name of your company representative."
+            return ["name" : "Last Name", "description": "The last name of your company representative."]
             
         case "legal_entity.ssn_last_4":
-            return "The last four digits of the compnay representative's SSN."
+            return ["name" : "Last 4 of Social Security number", "description" : "The last four digits of the compnay representative's SSN."]
         case "legal_entity.type":
-            return "Always company."
+            return ["name" : "Always company.", "description" : "Always company"]
 
         default:
-            return field
+            return ["name" : "", "description" : ""]
         }
     }
 }
