@@ -129,38 +129,14 @@ public final class Keys: NodeConvertible {
 
 extension Sequence where Iterator.Element == (key: String, value: Node) {
     
-    func grouped(by commonKey: String) throws -> [String : Node] {
-        let grouped = try map { (key, value) -> (String, Node) in
-            guard let range = key.range(of: "\(commonKey).") else {
-                throw Abort.custom(status: .internalServerError, message: "\(commonKey). did not exist in key.")
-            }
-            
-            return (key.substring(from: range.upperBound), value)
+    func group(with separator: String = ".") throws -> Node {
+        guard let dictionary = self as? [String : Node] else {
+            throw Abort.custom(status: .internalServerError, message: "Unable to cast to [String: Node].")
         }
         
-        var groupedDictionary: [String : Node] = [:]
-        grouped.forEach { groupedDictionary[$0] = $1 }
-        return groupedDictionary
-    }
-    
-    func nestObjects(by keys: [String]) throws -> [String : Node] {
-        guard var dictionarySelf = self as? [String: Node] else {
-            throw Abort.custom(status: .internalServerError, message: "Unable to cast in nestObjects.")
-        }
-        
-        for key in keys {
-            let filtered = filter { $0.key.contains(key) }
-            
-            filtered.forEach { dictionarySelf[$0.key] = nil }
-            
-            guard let final = try? filtered.grouped(by: key) else {
-                throw Abort.custom(status: .internalServerError, message: "Unable to group by \(key).")
-            }
-            
-            dictionarySelf[key] = .object(final)
-        }
-        
-        return dictionarySelf
+        var result = Node.object([:])
+        dictionary.forEach { result[$0.components(separatedBy: separator)] = $1 }
+        return result
     }
 }
 
@@ -264,22 +240,14 @@ public final class Account: NodeConvertible {
         ])
     }
     
-    public func descriptionsForNeededFields() throws -> [String: Node] {
+    public func descriptionsForNeededFields() throws -> Node {
         var descriptions: [String: Node] = [:]
         
         try verification.fields_needed.forEach {
             try description(for: $0).forEach { descriptions[$0] = $1 }
         }
         
-        descriptions = try descriptions.nestObjects(by: ["legal_entity"])
-        
-        guard let legalEntityNode = descriptions["legal_entity"], case let .object(legalEntity) = legalEntityNode else {
-            return descriptions
-        }
-        
-        descriptions["legal_entity"] = try .object(legalEntity.nestObjects(by: ["dob"]))
-        
-        return descriptions
+        return try descriptions.group()
     }
     
     private func description(for field: String) throws -> [String : Node] {

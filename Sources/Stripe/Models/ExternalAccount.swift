@@ -24,8 +24,8 @@ public final class ExternalAccount: NodeConvertible {
     
     public let id: String
     public let account: String
-    public let account_holder_name: String
-    public let account_holder_type: String
+    public let account_holder_name: String?
+    public let account_holder_type: String?
     public let bank_name: String
     public let country: String
     public let currency: Currency
