@@ -45,7 +45,7 @@ public final class Stripe {
         return try base.post("customers", query: query, token: account)
     }
 
-    public func createManagedAccount(email: String, source: String, local_id: Int?) throws -> Account {
+    public func createManagedAccount(email: String, local_id: Int?) throws -> Account {
         let defaultQuery: [String: CustomStringConvertible] = ["managed" : true, "country" : "US", "email" : email, "legal_entity[type]" : "company"]
         let query = local_id.flatMap { merge(query: defaultQuery, with: ["id" : "\($0)"]) } ?? defaultQuery
         
