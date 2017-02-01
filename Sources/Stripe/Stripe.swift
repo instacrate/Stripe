@@ -86,6 +86,10 @@ public final class Stripe {
     public func vendorInformation(for vendor: String) throws -> Account {
         return try base.get("accounts/\(vendor)")
     }
+    
+    public func transfers(for secretKey: String) throws -> [Transfer] {
+        return try base.get("https://api.stripe.com/v1/transfers", token: secretKey)
+    }
 
     public func delete(payment: String, from customer: String) throws -> JSON {
         return try base.delete("customers/\(customer)/sources/\(payment)")
