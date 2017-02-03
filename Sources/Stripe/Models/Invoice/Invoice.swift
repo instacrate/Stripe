@@ -46,7 +46,7 @@ public final class Invoice: NodeConvertible {
     
     public init(node: Node, in context: Context) throws {
         guard try node.extract("object") == Invoice.type else {
-            throw NodeError.unableToConvert(node: node, expected: Cupon.type)
+            throw NodeError.unableToConvert(node: node, expected: Invoice.type)
         }
         
         id = try node.extract("id")

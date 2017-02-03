@@ -54,7 +54,7 @@ public final class LineItem: NodeConvertible {
     
     public init(node: Node, in context: Context = EmptyNode) throws {
         guard try node.extract("object") == LineItem.type else {
-            throw NodeError.unableToConvert(node: node, expected: Cupon.type)
+            throw NodeError.unableToConvert(node: node, expected: LineItem.type)
         }
         
         id = try node.extract("id")

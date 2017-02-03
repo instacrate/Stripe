@@ -69,8 +69,8 @@ public final class Stripe {
         return try base.post("plans", query: parameters, token: account)
     }
 
-    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, cut: Double, cupon: String? = nil, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
-        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId, "application_fee_percent" : cut, "coupon" : cupon], with: metadata), token: publishableKey)
+    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, cut: Double, coupon: String? = nil, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
+        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId, "application_fee_percent" : cut, "coupon" : coupon], with: metadata), token: publishableKey)
 
         if oneTime {
             let json = try base.delete("/subscriptions/\(subscription.id)", query: ["at_period_end" : true])
@@ -83,7 +83,7 @@ public final class Stripe {
         return subscription
     }
     
-    public func createCupon(code: String) throws -> Cupon {
+    public func createCoupon(code: String) throws -> Coupon {
         return try base.post("coupons", query: ["duration": Duration.once.rawValue, "id" : code, "percent_off" : 5, "max_redemptions" : 1])
     }
 

@@ -13,7 +13,7 @@ public final class Discount: NodeConvertible {
     
     static let type = "discount"
     
-    public let coupon: Cupon
+    public let coupon: Coupon
     public let customer: String
     public let end: Date
     public let start: Date
@@ -25,7 +25,7 @@ public final class Discount: NodeConvertible {
             throw NodeError.unableToConvert(node: node, expected: Discount.type)
         }
         
-        coupon = try node.extract("cupon")
+        coupon = try node.extract("coupon")
         customer = try node.extract("customer")
         end = try node.extract("end")
         start = try node.extract("start")
@@ -34,7 +34,7 @@ public final class Discount: NodeConvertible {
     
     public func makeNode(context: Context = EmptyNode) throws -> Node {
         return try Node(node: [
-            "cupon" : coupon.makeNode(),
+            "coupon" : coupon.makeNode(),
             "customer" : .string(customer),
             "end" : .number(.double(end.timeIntervalSince1970)),
             "start" : .number(.double(start.timeIntervalSince1970)),

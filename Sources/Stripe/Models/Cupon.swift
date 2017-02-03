@@ -1,5 +1,5 @@
 //
-//  Cupon.swift
+//  Coupon.swift
 //  Stripe
 //
 //  Created by Hakon Hanesand on 12/2/16.
@@ -16,9 +16,9 @@ public enum Duration: String, NodeConvertible {
     case repeating
 }
 
-public final class Cupon: NodeConvertible {
+public final class Coupon: NodeConvertible {
     
-    static let type = "cupon"
+    static let type = "coupon"
     
     public let id: String
     public let amount_off: Int?
@@ -34,8 +34,8 @@ public final class Cupon: NodeConvertible {
     public let valid: Bool
     
     public init(node: Node, in context: Context = EmptyNode) throws {
-        guard try node.extract("object") == Cupon.type else {
-            throw NodeError.unableToConvert(node: node, expected: Cupon.type)
+        guard try node.extract("object") == Coupon.type else {
+            throw NodeError.unableToConvert(node: node, expected: Coupon.type)
         }
         
         id = try node.extract("id")
