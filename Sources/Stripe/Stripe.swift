@@ -12,13 +12,21 @@ import HTTP
 import Transport
 import Vapor
 
-fileprivate func merge(query _query: [String: CustomStringConvertible], with metadata: [String: CustomStringConvertible]) -> [String: CustomStringConvertible] {
+fileprivate func merge(query: [String: CustomStringConvertible?], with metadata: [String: CustomStringConvertible]) -> [String: CustomStringConvertible] {
     let arguments = metadata.map { ("metadata[\($0)]", $1) }
+    var result: [String: CustomStringConvertible] = [:]
     
-    var query = _query
-    arguments.forEach { query[$0] = $1 }
+    arguments.forEach {
+        result[$0] = $1
+    }
     
-    return query
+    query.forEach {
+        if ($1 != nil) {
+            result[$0] = $1
+        }
+    }
+    
+    return result
 }
 
 public final class Stripe {
@@ -61,8 +69,8 @@ public final class Stripe {
         return try base.post("plans", query: parameters, token: account)
     }
 
-    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, cut: Double, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
-        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId, "application_fee_percent" : cut], with: metadata), token: publishableKey)
+    public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, cut: Double, cupon: String? = nil, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
+        let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId, "application_fee_percent" : cut, "coupon" : cupon], with: metadata), token: publishableKey)
 
         if oneTime {
             let json = try base.delete("/subscriptions/\(subscription.id)", query: ["at_period_end" : true])
@@ -73,6 +81,10 @@ public final class Stripe {
         }
 
         return subscription
+    }
+    
+    public func createCupon(code: String) throws -> Cupon {
+        return try base.post("coupons", query: ["duration": Duration.once.rawValue, "id" : code, "percent_off" : 5, "max_redemptions" : 1])
     }
 
     public func paymentInformation(for customer: String) throws -> [Card] {

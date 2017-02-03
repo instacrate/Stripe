@@ -9,7 +9,7 @@
 import Foundation
 import Node
 
-enum Duration: String, NodeConvertible {
+public enum Duration: String, NodeConvertible {
     
     case forever
     case once
@@ -24,7 +24,7 @@ public final class Cupon: NodeConvertible {
     public let amount_off: Int?
     public let created: Date
     public let currency: String?
-    public let duration: String
+    public let duration: Duration
     public let duration_in_months: Int?
     public let livemode: Bool
     public let max_redemptions: Int
@@ -56,7 +56,7 @@ public final class Cupon: NodeConvertible {
         return try Node(node: [
             "id" : .string(id),
             "created" : .number(.double(created.timeIntervalSince1970)),
-            "duration" : .string(duration),
+            "duration" : try duration.makeNode(),
             "livemode" : .bool(livemode),
             "max_redemptions" : .number(.int(max_redemptions)),
             "percent_off" : .number(.int(percent_off)),
