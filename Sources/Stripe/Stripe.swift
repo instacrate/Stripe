@@ -68,6 +68,10 @@ public final class Stripe {
         let parameters = ["id" : "\(UUID().uuidString)", "amount" : "\(Int(price * 100))", "currency" : "usd", "interval" : interval.rawValue, "name" : name]
         return try base.post("plans", query: parameters, token: account)
     }
+    
+    public func update(customer id: String, parameters: [String : String]) throws-> Customer {
+        return try base.post("customer/\(id)", query: parameters)
+    }
 
     public func subscribe(user userId: String, to planId: String, with frequency: Interval = .month, oneTime: Bool, cut: Double, coupon: String? = nil, metadata: [String : CustomStringConvertible], under publishableKey: String) throws -> Subscription {
         let subscription: Subscription = try base.post("subscriptions", query: merge(query: ["customer" : userId, "plan" : planId, "application_fee_percent" : cut, "coupon" : coupon], with: metadata), token: publishableKey)
